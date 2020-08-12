@@ -11,7 +11,7 @@ idx = pd.IndexSlice
 def get_raw_covidtracking_data():
     """ Gets the current daily CSV from COVIDTracking """
     #url = "https://covidtracking.com/api/v1/states/daily.csv"
-    url = "full_re_clean.csv"
+    url = "rt_data.csv"
     data = pd.read_csv(url)
     return data
 

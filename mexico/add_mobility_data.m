@@ -1,4 +1,4 @@
-%mobility_table = readtable("Global_Mobility_Report.csv");
+% mobility_table = readtable("Global_Mobility_Report.csv");
 country = "Mexico";
 country_table = mobility_table(mobility_table.country_region == country, :);
 
