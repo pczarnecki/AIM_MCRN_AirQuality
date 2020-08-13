@@ -13,7 +13,7 @@ require(forecastHybrid, quietly = TRUE)
 # Get cases ---------------------------------------------------------------
 
 
-cases <- read.csv("italy_2000_25.csv")
+cases <- read.csv("rt2_data.csv")
 cases$date <- as.Date(cases$date)
 
 # Shared delay ------------------------------------------------------------

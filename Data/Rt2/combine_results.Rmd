@@ -1,13 +1,13 @@
 
 
 ```{r}
-cases <- read.csv("italy2000_25_rt.csv")
+cases <- read.csv("rt2_data.csv")
 cities <- unique(cases$region)
 cases$date <- as.Date(cases$date)
-num_days <- 151
+num_days <- 160
 output <- cases[1:num_days, 2:3]
 for (i in 1:length(cities)) {
-  r_eff <- readRDS(paste("italy/regional/", cities[i],"/2020-07-23/bigr_estimates.rds", sep = ""))
+  r_eff <- readRDS(paste("italy/regional/", cities[i],"/2020-08-01/bigr_estimates.rds", sep = ""))
   r_eff$date <- as.Date(r_eff$date)
 
   r_eff[[ cities[i] ]]   <- r_eff$mean               
