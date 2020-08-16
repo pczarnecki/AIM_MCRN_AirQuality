@@ -96,3 +96,12 @@ for i = 1:length(cities)
     
     
 end
+
+FolderName = '/';   % Your destination folder
+FigList = findobj(allchild(0), 'flat', 'Type', 'figure');
+for iFig = 1:length(FigList)
+  FigHandle = FigList(iFig);
+  FigName   = get(FigHandle, 'Number');
+  FigName   = num2str(FigName);
+  saveas(FigHandle, strcat(FigName, '.png'));
+end
