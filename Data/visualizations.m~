@@ -1,0 +1,97 @@
+cities = ["Napoli", "Piacenza", "Parma", "Reggio_Emilia", "Modena", "Bologna", "Rimini", "Roma", "Varese", "Como", "Milano", "Bergamo", "Brescia", "Pavia", "Cremona", "Mantova", "Lecco", "Lodi", "Monza", "Bolzano", "Torino", "Cuneo", "Alessandria", "Firenze", "Verona"];
+states = ["Campagnia/Lazio/Toscana", "Emilia-Romagna", "Emilia-Romagna", "Emilia-Romagna", "Emilia-Romagna", "Emilia-Romagna", "Emilia-Romagna", "Campagnia/Lazio/Toscana", "Lombardia", "Lombardia", "Lombardia", "Lombardia", "Lombardia", "Lombardia", "Lombardia", "Lombardia", "Lombardia", "Lombardia", "Lombardia", "PA Bolzano/Veneto", "Piemonte", "Piemonte", "Piemonte", "Campagnia/Lazio/Toscana", "PA Bolzano/Veneto"];
+state_fig = [2, 3, 3, 3, 3, 3, 3, 2, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 4, 7, 7, 7, 2, 4];
+dep_vars = ["daily_cases", "med_temp", "med_hum", "pm25", "home", "rt1"];
+
+for i = 1:length(cities)
+    current_table = readtable(strcat("Combined Data/", cities(i), ".csv"));
+    
+    for j = 1:length(dep_vars)+1
+        multiplier = 10^(j-1);
+        x = 1:height(current_table);
+        if j > 1
+            x = current_table.(char(dep_vars));
+        end
+        figure(multiplier*1)
+        sgtitle("All of Italy")
+        subplot(3, 2, 1)
+        hold on
+        xlabel("Day")
+        ylabel("Daily New Cases")
+        plot(x, current_table.daily_cases, 'k')
+
+        subplot(3, 2, 2)
+        hold on
+        xlabel("Day")
+        ylabel("Median Temperature")
+        plot(x, current_table.med_temp, 'k')
+
+        subplot(3, 2, 3)
+        hold on
+        xlabel("Day")
+        ylabel("Median Humidity")
+        plot(x, current_table.med_hum, 'k')
+
+        subplot(3, 2, 4)
+        hold on
+        xlabel("Day")
+        ylabel("Median PM_{2.5}")
+        plot(x, current_table.pm25, 'k')
+        plot(70*ones(roundup(max(x),0),1), 'r--')
+
+        subplot(3, 2, 5)
+        hold on
+        xlabel("Day")
+        ylabel("% Change in Staying at Home")
+        plot(current_table.home, 'k')
+
+        subplot(3, 2, 6)
+        hold on
+        xlabel("Day")
+        ylabel("Median R_t")
+        plot(current_table.rt1, 'k')
+
+
+        figure(multiplier*state_fig(i))
+        sgtitle(states(i))
+        subplot(3, 2, 1)
+        hold on
+        xlabel("Day")
+        ylabel("Daily New Cases")
+        plot(current_table.daily_cases, 'k')
+
+        subplot(3, 2, 2)
+        hold on
+        xlabel("Day")
+        ylabel("Median Temperature")
+        plot(current_table.med_temp, 'k')
+
+        subplot(3, 2, 3)
+        hold on
+        xlabel("Day")
+        ylabel("Median Humidity")
+        plot(current_table.med_hum, 'k')
+
+        subplot(3, 2, 4)
+        hold on
+        xlabel("Day")
+        ylabel("Median PM_{2.5}")
+        plot(current_table.pm25, 'k')
+        plot(70*ones(200,1), 'r--')
+
+        subplot(3, 2, 5)
+        hold on
+        xlabel("Day")
+        ylabel("% Change in Staying at Home")
+        plot(current_table.home, 'k')
+
+        subplot(3, 2, 6)
+        hold on
+        xlabel("Day")
+        ylabel("Median R_t")
+        plot(current_table.rt1, 'k')
+   
+    end
+    
+    
+end
