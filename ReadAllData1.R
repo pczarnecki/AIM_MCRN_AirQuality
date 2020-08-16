@@ -2,7 +2,7 @@
 library(dplyr)
 library(readr)
 library(tidyverse)
-path <- "/Users/Laura/Documents/ResearchCode/Air Quality COVID/25cities/combined/"
+path <- "/Users/pczar/Desktop/AIM Workshop/AIM_MCRN_AirQuality/Data/Combined Data/"
 files <- list.files(path=path, pattern="*.csv")
 for(file in files){
   perpos <- which(strsplit(file, "")[[1]]==".")
@@ -64,18 +64,18 @@ italy_25$day_num = as.numeric(strftime(italy_25$date, format = "%j"))
 city_names
 
 #Combine with rt2
-Rt2 <- read_csv("~/Documents/ResearchCode/Air Quality COVID/Data/Rt2/Data/Rt2.csv")
+#Rt2 <- read_csv("~/Documents/ResearchCode/Air Quality COVID/Data/Rt2/Data/Rt2.csv")
 #Change Reggio_Emilia to Reggio
 
-colnames(Rt2)[7] <- "Reggio"
+#colnames(Rt2)[7] <- "Reggio"
 
 #Make the Rt2 data into long format
-Rt2_long <- pivot_longer(Rt2, 4:28, names_to = "city_name", values_to = "rt")
+#Rt2_long <- pivot_longer(Rt2, 4:28, names_to = "city_name", values_to = "rt")
 
 #Combine italy_25 and Rt2 by date and city
-italy_Rt2 <- left_join(italy_25, Rt2_long, by = c("date", "city_name"))
+#italy_Rt2 <- left_join(italy_25, Rt2_long, by = c("date", "city_name"))
 
 #plot rt2 for each city
-ggplot(italy_Rt2, aes(x = date, y = rt, color = city_name))+geom_line()+labs(y = "Rt2")
+#ggplot(italy_Rt2, aes(x = date, y = rt, color = city_name))+geom_line()+labs(y = "Rt2")
 #plot rt live for each city
-ggplot(italy_Rt2, aes(x = date, y = mean, color = city_name))+geom_line()+labs(y = "Rt")
+#ggplot(italy_Rt2, aes(x = date, y = mean, color = city_name))+geom_line()+labs(y = "Rt")
