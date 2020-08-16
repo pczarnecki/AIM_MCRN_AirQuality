@@ -61,8 +61,13 @@ my_list <- lapply(city_names, function(x){
   summary(gam(log(mean)~ s(home)+s(pm25, k = 5)+s(med_temp, k = 6)+s(med_hum, k = 6), data = italy_25[italy_25$city_name == x,], family = gaussian))
 })
 ```
+\newpage
+  
+  
+This gratia package makes nice gam plots based off of ggplot. Have a lot of things you can customize too. Might be nice to use in presentaitons, etc.
 
-This gratia package makes nice gam plots based off of ggplot. Have a lot of things you can customize too. Might be nice to use in presentaitons, etc
+  
+  
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 #plot from my list
 library(gratia)
@@ -79,7 +84,7 @@ draw(my_big_gam)
 summary(my_big_gam)
 ```
 Plot of all R(t) curves and all infections
-```{r echo = FALSE}
+```{r echo = FALSE, warning = FALSE}
 #plot all R(t) curves
 library(ggplot2)
 ggplot(italy_25, aes(date, mean, color = city_name))+geom_line()
@@ -91,7 +96,7 @@ ggplot(italy_25, aes(date, infections, color = city_name))+geom_line()
 ##What exactly is the "infections" column in the data? It's very smooth
 
 Here I performed curve registration which essentially centers all of the curves so the peaks occur at the same time
-```{r echo = FALSE}
+```{r echo = FALSE, warning = FALSE, message = FALSE}
 #data registration
 ind <- italy_25 %>% group_by(city_name) %>% summarise(which.max(infections))
 

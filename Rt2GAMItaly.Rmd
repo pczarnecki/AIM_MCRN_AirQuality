@@ -1,0 +1,71 @@
+---
+title: "All25Rt2GAM"
+author: "Laura Albrecht"
+date: "8/14/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+
+Create GAM models for all 25 cities in Italy as well as all of Italy combined using second Rt calculation.
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+source("ReadAllData1.R")
+library(mgcv)
+library(tidyverse)
+library(ggplot2)
+#all of italy
+italy_Rt2gam <- gam(log(rt)~ s(home, k = 5)+s(pm25, k = 5)+s(med_temp, k = 5)+s(med_hum, k = 5), data = italy_Rt2, family = gaussian)
+
+plot(italy_Rt2gam,scale=0,se=2, shade=TRUE,pages=1, scheme = 2,main = "25 Cities in Italy")
+summary(italy_Rt2gam)
+gam.check(italy_Rt2gam)
+
+#all of italy including city
+#italy_Rt2f <- italy_Rt2
+#italy_Rt2f$city_name <- as.factor(italy_Rt2$city_name)
+
+#italy_Rt2gam <- gam(log(rt)~ 
+#                    s(home, k = 5)+s(pm25, k = 5)+s(med_temp, k = 5)+s(med_hum, k = 5)+city_name, data = italy_Rt2f, family = gaussian)
+
+#plot(italy_Rt2gam,scale=0,se=2, shade=TRUE,pages=1, scheme = 2,main = "25 Cities in Italy")
+#summary(italy_Rt2gam)
+
+
+```
+
+```{r message = FALSE, warning = FALSE, echo = FALSE}
+
+#loop through and save gams
+for(city in city_names){
+  assign( paste(city,"_gam", sep = ""), gam(log(rt)~ 
+                    s(home, k = 5)+s(pm25, k = 5)+s(med_temp, k = 6)+s(med_hum, k = 6), data = italy_Rt2[italy_Rt2$city_name == city,], family = gaussian))}
+
+#loop through and plot gams
+for(city in city_names){
+  plot(get(paste(city, "_gam", sep = "")),scale=0,se=2, shade=TRUE,pages=1, scheme = 2, main = city)
+}
+
+#for(city in city_names){
+#  summary(get(paste(city, "_gam", sep = "")))
+#}
+ # summary(temp.gamM1)
+ # gam.check(temp.gamM1)
+
+
+```
+
+
+The first plot shows the Rt.live values we used previously, the second plot is the new Rt values used in this analysis
+
+```{r echo = FALSE, message = FALSE, warning=FALSE}
+
+#plot rt live for each city
+ggplot(italy_Rt2, aes(x = date, y = mean, color = city_name))+geom_line()+labs(y = "Rt")
+
+#plot rt2 for each city
+ggplot(italy_Rt2, aes(x = date, y = rt, color = city_name))+geom_line()+labs(y = "Rt2")
+
+```
+
