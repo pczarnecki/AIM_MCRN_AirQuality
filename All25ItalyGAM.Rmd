@@ -150,8 +150,7 @@ for (city in city_names) {
   city_gam <- get(paste(city, "_exclude_gam", sep = ""))
   pred_cases <- predict(city_gam,city_data)
   
-  plot(exp(pred_cases),scale=0,se=2, shade=TRUE,pages=1, scheme = 2, main = city)
-
+  plot((pred_cases)-log(city_data$mean), scale=0,se=2, shade=TRUE,pages=1, scheme = 2, main = city)
 
 
 }
