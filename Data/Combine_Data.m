@@ -22,7 +22,7 @@ for city_idx = 1:length(cities)
     rt1_table = readtable(strcat("Rt1/data/", cities(city_idx), ".csv"));
     rt1_table.rt1 = rt1_table.mean;
     rt1_table = rt1_table(:, [1, 6, end]);
-    output_table = outerjoin(output_table, rt1_table,'Type','right', 'MergeKeys', true);
+    output_table = outerjoin(output_table, rt1_table,'Type','left', 'MergeKeys', true);
     
     date = rt2_table.date;
     rt2 = (rt2_table.(char(cities(city_idx))));

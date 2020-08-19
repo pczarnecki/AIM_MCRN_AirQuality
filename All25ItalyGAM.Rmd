@@ -100,7 +100,6 @@ Here I performed curve registration which essentially centers all of the curves 
 #data registration
 source("ReadAllData1.R")
 
-italy_25 <- italy_25[!italy_25$daily_cases=="NaN",] #removing rows that we don't have data for
 ind <- italy_25 %>% group_by(city_name) %>% summarise(which.max(infections))
 
 library(zoo)
