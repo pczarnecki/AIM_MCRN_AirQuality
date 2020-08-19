@@ -108,7 +108,7 @@ italy_25[italy_25$city_name == ind$city_name[i],]$day_num1 <- italy_25[italy_25$
 }
 
 italy_25$Ave7Daily <- NA
-italy_25$Ave7Daily[1:height(italy_25)] <- rollmean(italy_25$daily_cases, 7)
+italy_25$Ave7Daily[1:nrow(italy_25)] <- rollmean(italy_25$daily_cases, 7)
 
 #ggplot(italy_25[1:3744,], aes(day_num1, Ave7Daily, color = city_name))+geom_line()
 italy_25$day_num2 <- italy_25$day_num1 - 54
