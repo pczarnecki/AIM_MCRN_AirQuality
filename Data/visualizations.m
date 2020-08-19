@@ -19,38 +19,38 @@ for i = 1:length(cities)
         hold on
         xlabel(xlabels(j))
         ylabel("Daily New Cases")
-        plot(x, current_table.daily_cases, 'k')
+        plot(x, current_table.daily_cases, 'k.')
 
         subplot(3, 2, 2)
         hold on
         xlabel(xlabels(j))
         ylabel("Median Temperature")
-        plot(x, current_table.med_temp, 'k')
+        plot(x, current_table.med_temp, 'k.')
 
         subplot(3, 2, 3)
         hold on
         xlabel(xlabels(j))
         ylabel("Median Humidity")
-        plot(x, current_table.med_hum, 'k')
+        plot(x, current_table.med_hum, 'k.')
 
         subplot(3, 2, 4)
         hold on
         xlabel(xlabels(j))
         ylabel("Median PM_{2.5}")
-        plot(x, current_table.pm25, 'k')
+        plot(x, current_table.pm25, 'k.')
         plot(70*ones(ceil(max(x)),1), 'r--')
 
         subplot(3, 2, 5)
         hold on
         xlabel(xlabels(j))
         ylabel("% Change in Staying at Home")
-        plot(x, current_table.home, 'k')
+        plot(x, current_table.home, 'k.')
 
         subplot(3, 2, 6)
         hold on
         xlabel(xlabels(j))
         ylabel("Median R_t")
-        plot(x, current_table.rt1, 'k')
+        plot(x, current_table.rt1, 'k.')
 
 
         figure(multiplier*state_fig(i))
@@ -59,49 +59,50 @@ for i = 1:length(cities)
         hold on
         xlabel(xlabels(j))
         ylabel("Daily New Cases")
-        plot(x, current_table.daily_cases, 'k')
+        plot(x, current_table.daily_cases, 'k.')
 
         subplot(3, 2, 2)
         hold on
         xlabel(xlabels(j))
         ylabel("Median Temperature")
-        plot(x, current_table.med_temp, 'k')
+        plot(x, current_table.med_temp, 'k.')
 
         subplot(3, 2, 3)
         hold on
         xlabel(xlabels(j))
         ylabel("Median Humidity")
-        plot(x, current_table.med_hum, 'k')
+        plot(x, current_table.med_hum, 'k.')
 
         subplot(3, 2, 4)
         hold on
         xlabel(xlabels(j))
         ylabel("Median PM_{2.5}")
-        plot(x, current_table.pm25, 'k')
+        plot(x, current_table.pm25, 'k.')
         plot(70*ones(max(ceil(x)),1), 'r--')
 
         subplot(3, 2, 5)
         hold on
         xlabel(xlabels(j))
         ylabel("% Change in Staying at Home")
-        plot(x, current_table.home, 'k')
+        plot(x, current_table.home, 'k.')
 
         subplot(3, 2, 6)
         hold on
         xlabel(xlabels(j))
         ylabel("Median R_t")
-        plot(x, current_table.rt1, 'k')
+        plot(x, current_table.rt1, 'k.')
+       
    
     end
     
     
 end
 
-FolderName = '/';   % Your destination folder
-FigList = findobj(allchild(0), 'flat', 'Type', 'figure');
-for iFig = 1:length(FigList)
-  FigHandle = FigList(iFig);
-  FigName   = get(FigHandle, 'Number');
-  FigName   = num2str(FigName);
-  saveas(FigHandle, strcat(FigName, '.png'));
-end
+% FolderName = '/';   % Your destination folder
+% FigList = findobj(allchild(0), 'flat', 'Type', 'figure');
+% for iFig = 1:length(FigList)
+%   FigHandle = FigList(iFig);
+%   FigName   = get(FigHandle, 'Number');
+%   FigName   = num2str(FigName);
+%   saveas(FigHandle, strcat(FigName, '.png'));
+% end
