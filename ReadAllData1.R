@@ -2,7 +2,7 @@
 library(dplyr)
 library(readr)
 library(tidyverse)
-path <- "/Users/pczar/Desktop/AIM Workshop/AIM_MCRN_AirQuality/Data/Combined Data/"
+path <- "Data/Combined Data/"
 files <- list.files(path=path, pattern="*.csv")
 for(file in files){
   perpos <- which(strsplit(file, "")[[1]]==".")
@@ -22,7 +22,7 @@ for(city in Italy_Cities){
   city_get <- get(city)
   city_name <- strsplit(city, "_")[[1]][1]
   city_name <- rep(city_name, length(city_get[,1]))
-  assign(paste(city,"_all", sep = ""), cbind(city_get, city_name))
+  assign(paste(city,"_total_all", sep = ""), cbind(city_get, city_name))
 }
 
 #Lodi and Parma have date in different format, change to same format as other dataframes
@@ -38,7 +38,7 @@ italy_25 <- bind_rows(Alessandria_total_all, Bergamo_total_all,     Bologna_tota
                        Lecco_total_all,       Lodi_total_all,        Mantova_total_all,    
                        Milano_total_all,      Modena_total_all,      Monza_total_all,      
                        Napoli_total_all,      Parma_total_all,       Pavia_total_all,      
-                       Piacenza_total_all,    Reggio_total_all,      Rimini_total_all,     
+                       Piacenza_total_all,    Reggio_Emilia_total_all,      Rimini_total_all,     
                        Roma_total_all,        Torino_total_all,      Varese_total_all,     
                        Verona_total_all  )
 #format date as date

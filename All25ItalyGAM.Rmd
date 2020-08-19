@@ -13,7 +13,7 @@ Create GAM models for all 25 cities in Italy as well as all of Italy combined.
 source("ReadAllData1.R")
 library(mgcv)
 #all of italy
-italy_25gam <- gam(log(mean)~ 
+italy_25gam <- gam(log(rt1)~ 
                     s(home, k = 5)+s(pm25, k = 5)+s(med_temp, k = 5)+s(med_hum, k = 5), data = italy_25, family = gaussian)
 
 plot(italy_25gam,scale=0,se=2, shade=TRUE,pages=1, scheme = 2,main = "25 Cities in Italy")
@@ -24,7 +24,7 @@ gam.check(italy_25gam)
 #italy_25f <- italy_25
 #italy_25f$city_name <- as.factor(italy_25$city_name)
 
-#italy_25gam <- gam(log(mean)~ 
+#italy_25gam <- gam(log(rt1)~ 
 #                    s(home, k = 5)+s(pm25, k = 5)+s(med_temp, k = 5)+s(med_hum, k = 5)+city_name, data = italy_25f, family = gaussian)
 
 #plot(italy_25gam,scale=0,se=2, shade=TRUE,pages=1, scheme = 2,main = "25 Cities in Italy")
@@ -37,7 +37,7 @@ gam.check(italy_25gam)
 library(mgcv)
 #loop through and save gams
 for(city in city_names){
-  assign( paste(city,"_gam", sep = ""), gam(log(mean)~ 
+  assign( paste(city,"_gam", sep = ""), gam(log(rt1)~ 
                     s(home)+s(pm25, k = 5)+s(med_temp, k = 6)+s(med_hum, k = 6), data = italy_25[italy_25$city_name == city,], family = gaussian))}
 
 #loop through and plot gams
@@ -58,7 +58,7 @@ for(city in city_names){
 #trying with lapply
 
 my_list <- lapply(city_names, function(x){
-  summary(gam(log(mean)~ s(home)+s(pm25, k = 5)+s(med_temp, k = 6)+s(med_hum, k = 6), data = italy_25[italy_25$city_name == x,], family = gaussian))
+  summary(gam(log(rt1)~ s(home)+s(pm25, k = 5)+s(med_temp, k = 6)+s(med_hum, k = 6), data = italy_25[italy_25$city_name == x,], family = gaussian))
 })
 ```
 \newpage
@@ -72,14 +72,14 @@ This gratia package makes nice gam plots based off of ggplot. Have a lot of thin
 #plot from my list
 library(gratia)
 
-my_gam <- gam(log(mean)~ s(home)+s(pm25, k = 5)+s(med_temp, k = 6)+s(med_hum, k = 6), data = italy_25[italy_25$city_name=="Alessandria",], family = gaussian)
+my_gam <- gam(log(rt1)~ s(home)+s(pm25, k = 5)+s(med_temp, k = 6)+s(med_hum, k = 6), data = italy_25[italy_25$city_name=="Alessandria",], family = gaussian)
 
 #use gratia package for plotting 
 draw(my_gam)
 ```
 
 ```{r include = FALSE}
-my_big_gam <- gam(log(mean)~ s(home)+s(pm25)+s(med_temp)+s(med_hum)+s(no2)+s(o3) +ti(med_temp, med_hum)+ti(pm25, no2) + ti(pm25, o3)+ti(pm25, med_temp), data = italy_25, family = gaussian)
+my_big_gam <- gam(log(rt1)~ s(home)+s(pm25)+s(med_temp)+s(med_hum)+s(no2)+s(o3) +ti(med_temp, med_hum)+ti(pm25, no2) + ti(pm25, o3)+ti(pm25, med_temp), data = italy_25, family = gaussian)
 draw(my_big_gam)
 summary(my_big_gam)
 ```
@@ -87,7 +87,7 @@ Plot of all R(t) curves and all infections
 ```{r echo = FALSE, warning = FALSE}
 #plot all R(t) curves
 library(ggplot2)
-ggplot(italy_25, aes(date, mean, color = city_name))+geom_line()
+ggplot(italy_25, aes(date, rt1, color = city_name))+geom_line()
 
 #plot infections curve
 ggplot(italy_25, aes(date, infections, color = city_name))+geom_line()
@@ -108,7 +108,7 @@ italy_25[italy_25$city_name == ind$city_name[i],]$day_num1 <- italy_25[italy_25$
 }
 
 italy_25$Ave7Daily <- NA
-italy_25$Ave7Daily[1:3744] <- rollmean(italy_25$Daily, 7)
+italy_25$Ave7Daily[1:height(italy_25)] <- rollmean(italy_25$daily_cases, 7)
 
 #ggplot(italy_25[1:3744,], aes(day_num1, Ave7Daily, color = city_name))+geom_line()
 italy_25$day_num2 <- italy_25$day_num1 - 54
@@ -127,7 +127,7 @@ source("ReadAllData1.R")
 library(mgcv)
 for (city in city_names) {
   new_data = subset(italy_25, city_name!=city)
-  assign( paste(city,"_exclude_gam", sep = ""), gam(log(mean)~ 
+  assign( paste(city,"_exclude_gam", sep = ""), gam(log(rt1)~ 
                     s(home)+s(pm25, k = 5)+s(med_temp, k = 6)+s(med_hum, k = 6), data = new_data, family = gaussian))
 
   plot(get(paste(city, "_exclude_gam", sep = "")),scale=0,se=2, shade=TRUE,pages=1, scheme = 2, main = city)
@@ -150,7 +150,7 @@ for (city in city_names) {
   city_gam <- get(paste(city, "_exclude_gam", sep = ""))
   pred_cases <- predict(city_gam,city_data)
   
-  plot((pred_cases)-log(city_data$mean), scale=0,se=2, shade=TRUE,pages=1, scheme = 2, main = city)
+  plot((pred_cases)-log(city_data$rt1), scale=0,se=2, shade=TRUE,pages=1, scheme = 2, main = city)
 
 
 }
