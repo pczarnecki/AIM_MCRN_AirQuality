@@ -16,7 +16,7 @@ library(mgcv)
 italy_25gam <- gam(log(rt1)~ 
                     s(home, k = 5)+s(pm25, k = 5)+s(med_temp, k = 5)+s(med_hum, k = 5), data = italy_25, family = gaussian)
 
-plot(italy_25gam,scale=0,se=2, shade=TRUE,pages=1, scheme = 2,main = "25 Cities in Italy")
+plot(italy_25gam, ylim=c(-.4,.4), scale=0,se=2, shade=TRUE,pages=1, scheme = 2,main = "25 Cities in Italy")
 summary(italy_25gam)
 gam.check(italy_25gam)
 
