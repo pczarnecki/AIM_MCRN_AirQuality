@@ -28,7 +28,9 @@ for city_idx = 1:length(cities)
     rt2 = (rt2_table.(char(cities(city_idx))));
     rt2_city_table = table(date, rt2);
     output_table = outerjoin(output_table, rt2_city_table,'Type','left', 'MergeKeys', true);
-
+    if cities(city_idx) == "Bolzano"
+        output_table = output_table(4:end, :);
+    end
     
     writetable(output_table, strcat("Combined Data/", cities(city_idx), ".csv"));
 end
