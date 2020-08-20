@@ -25,11 +25,12 @@ for(city in Italy_Cities){
   assign(paste(city,"_total_all", sep = ""), cbind(city_get, city_name))
 }
 
+#commented out bc this was fixed
 #Lodi and Parma have date in different format, change to same format as other dataframes
-Lodi_total_all$date <- as.Date(Lodi_total_all$date, format = "%m/%d/%y")
-Parma_total_all$date <- as.Date(Parma_total_all$date, format = "%m/%d/%y")
-Lodi_total_all$date <- as.character(Lodi_total_all$date)
-Parma_total_all$date <- as.character(Parma_total_all$date)
+#Lodi_total_all$date <- as.Date(Lodi_total_all$date, format = "%m/%d/%y")
+#Parma_total_all$date <- as.Date(Parma_total_all$date, format = "%m/%d/%y")
+#Lodi_total_all$date <- as.character(Lodi_total_all$date)
+#Parma_total_all$date <- as.character(Parma_total_all$date)
 
 
 italy_25 <- bind_rows(Alessandria_total_all, Bergamo_total_all,     Bologna_total_all,    
