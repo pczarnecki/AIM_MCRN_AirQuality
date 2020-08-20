@@ -1,0 +1,103 @@
+---
+title: "ItalyDaySinceMax"
+output: pdf_document
+---
+
+``` {r}
+source("ReadAllData1.R")
+library(mgcv)
+
+```
+Laura's centering:
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+#data registration
+source("ReadAllData1.R")
+
+ind <- italy_25 %>% group_by(city_name) %>% summarise(which.max(infections))
+
+library(zoo)
+italy_25$day_num1 <- italy_25$day_num
+
+for(i in 1:length(ind$city_name)){
+italy_25[italy_25$city_name == ind$city_name[i],]$day_num1 <- italy_25[italy_25$city_name == ind$city_name[i],]$day_num - ind$`which.max(infections)`[i]
+}
+
+italy_25$Ave7Daily <- NA
+italy_25$Ave7Daily[1:nrow(italy_25)] <- rollmean(italy_25$daily_cases, 7)
+
+#ggplot(italy_25[1:3744,], aes(day_num1, Ave7Daily, color = city_name))+geom_line()
+italy_25$day_num2 <- italy_25$day_num1 - 54
+
+ggplot(italy_25, aes(day_num2, infections, color = city_name))+geom_line()+labs(x= "Number of Days Since Peak", y = "Infections", title = "Centered Infections")
+```
+
+```{r}
+#original GAM
+italy_25gam <- gam(log(rt1)~ 
+                    s(home, k = 5)+s(pm25, k = 5)+s(med_temp, k = 5)+s(med_hum, k = 5), data = italy_25, family = gaussian)
+
+plot(italy_25gam, ylim=c(-.4,.4), scale=0,se=2, shade=TRUE,pages=1, scheme = 2,main = "25 Cities in Italy")
+summary(italy_25gam)
+gam.check(italy_25gam)
+
+#gam including days since infection
+center_gam <- gam(infections~ s(home)+s(pm25)+s(med_temp)+s(med_hum)+s(day_num2), data = italy_25, family = gaussian)
+plot(center_gam, scale = 0, se=2, shade=TRUE, pages=1, scheme = 2)
+summary(center_gam)
+gam.check(center_gam)
+```
+
+Make GAM for each individual city, considering days since peak:
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+sub_city_names = city_names[c(1:10, 12:16, 18:25)]
+for (city in sub_city_names) {
+  new_data = subset(italy_25, city_name==city, city_name!="Lodi")
+  assign(paste(city,"_peak_gam", sep = ""), gam(log(rt1)~ 
+                    s(home)+s(pm25, k = 5)+s(med_temp, k = 6)+s(med_hum, k = 6)+s(day_num2), data = new_data, family = gaussian))
+
+  plot(get(paste(city, "_peak_gam", sep = "")),scale=0,se=2, shade=TRUE,pages=1, scheme = 2, main = city)
+
+}
+
+```
+
+
+Making a GAM for all cities combined, excluding each one, with the days since maximum cases considered (original in All25ItalyGAM:
+```{r}
+
+for (city in sub_city_names) {
+  new_data = subset(italy_25, city_name!=city)
+  assign( paste(city,"_peak_exclude_gam", sep = ""), gam(log(rt1)~ 
+                    s(home)+s(pm25, k = 5)+s(med_temp, k = 6)+s(med_hum, k = 6) + s(day_num2), data = new_data, family = gaussian))
+
+  plot(get(paste(city, "_peak_exclude_gam", sep = "")),scale=0,se=2, shade=TRUE,pages=1, scheme = 2, main = city)
+
+}
+
+
+```
+
+Using that GAM to predict the excluded city's outcome:
+```{r}
+
+library(mgcv)
+library(ggplot2)
+
+
+for (city in sub_city_names) {
+  city_data = subset(italy_25, city_name==city)
+  city_gam <- get(paste(city, "_exclude_gam", sep = ""))
+  pred_cases <- predict(city_gam,city_data)
+  
+  plot((pred_cases)-log(city_data$rt1), scale=0,se=2, shade=TRUE,pages=1, scheme = 2, main = city)
+
+
+}
+
+
+
+```
+
+
+
+
