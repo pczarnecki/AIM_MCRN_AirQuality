@@ -13,9 +13,9 @@ Create GAM models for all 25 cities in Italy as well as all of Italy combined.
 source("ReadAllData1.R")
 library(mgcv)
 #all of italy
+italy_25$city_name <- as.factor(italy_25$city_name)
 
-
-italy_25gam <- gam(log(rt1)~ s(city_id, k=25)+
+italy_25gam <- gam(log(rt1)~ city_name +
                     s(home, k = 5)+s(pm25, k = 5) +s(med_temp, k=5) + s(med_hum, k=5), data = italy_25, family = gaussian)
 
 plot(italy_25gam, scale=0,se=2, shade=TRUE,pages=1, scheme = 2,main = "25 Cities in Italy")
