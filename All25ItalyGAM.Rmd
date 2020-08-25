@@ -87,7 +87,8 @@ Plot of all R(t) curves and all infections
 ```{r echo = FALSE, warning = FALSE}
 #plot all R(t) curves
 library(ggplot2)
-ggplot(italy_25, aes(date, rt1, color = city_name))+geom_line()
+p <- ggplot(italy_25, aes(date, rt1, color = city_name))+geom_line()
+p + labs(x = "Date", y = "R(t)", color = "Province")
 
 #plot infections curve
 ggplot(italy_25, aes(date, infections, color = city_name))+geom_line()
