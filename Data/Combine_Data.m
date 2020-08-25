@@ -32,6 +32,8 @@ for city_idx = 1:length(cities)
         output_table = output_table(4:end, :);
     end
     
+    output_table.city_id = city_idx*ones(length(output_table.daily_cases),1);
+    
     writetable(output_table, strcat("Combined Data/", cities(city_idx), ".csv"));
 end
 
