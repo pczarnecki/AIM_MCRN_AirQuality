@@ -1,6 +1,7 @@
 clear
 
 cities = ["Napoli", "Piacenza", "Parma", "Reggio_Emilia", "Modena", "Bologna", "Rimini", "Roma", "Varese", "Como", "Milano", "Bergamo", "Brescia", "Pavia", "Cremona", "Mantova", "Lecco", "Lodi", "Monza", "Bolzano", "Torino", "Cuneo", "Alessandria", "Firenze", "Verona"];
+states = ["Campagnia", "Emilia-Romagna", "Emilia-Romagna", "Emilia-Romagna", "Emilia-Romagna", "Emilia-Romagna", "Emilia-Romagna", "Lazio", "Lombardia", "Lombardia", "Lombardia", "Lombardia", "Lombardia", "Lombardia", "Lombardia", "Lombardia", "Lombardia", "Lombardia", "Lombardia", "PA Bolzano", "Piemonte", "Piemonte", "Piemonte", "Toscana", "Veneto"];
 infection_table = readtable("italy_covid_data.csv");
 mobility_table = readtable("italy_mobility_report.csv");
 rt2_table = readtable("Rt2/Data/Rt2.csv");
@@ -31,8 +32,10 @@ for city_idx = 1:length(cities)
     if cities(city_idx) == "Bolzano"
         output_table = output_table(4:end, :);
     end
-    
-    output_table.city_id = city_idx*ones(length(output_table.daily_cases),1);
+    state_name = cell(height(output_table),1);
+    state_name(:) = cellstr(states(city_idx));
+    output_table.state = state_name;
+
     
     writetable(output_table, strcat("Combined Data/", cities(city_idx), ".csv"));
 end

@@ -20,3 +20,6 @@ mexico/big_mexico.csv
 mexico/add_mobility_data.m~
 mexico/Global_Mobility_Report.csv
 mexico/mexico_timeseries.asv
+Data/visualizations.m~
+Gam_cities.Rmd
+Gam_cities_removed.pdf

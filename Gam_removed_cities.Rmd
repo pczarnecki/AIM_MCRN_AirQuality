@@ -1,0 +1,68 @@
+---
+title: "Removing Outliers"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+Create GAM models for all 25 cities in Italy as well as all of Italy combined.
+
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+source("ReadAllData1.R")
+library(mgcv)
+#all of italy
+
+
+italy_25gam <- gam(log(rt1)~ city_name+
+                    s(home, k = 5)+s(pm25, k = 5) +s(med_temp, k=5) + s(med_hum, k=5), data = italy_25, family = gaussian)
+
+plot(italy_25gam, scale=0,se=2, shade=TRUE,pages=1, scheme = 2,main = "25 Cities in Italy")
+summary(italy_25gam)
+gam.check(italy_25gam)
+
+
+```
+
+
+
+
+
+
+
+
+ Now remove the two Rt outliers (Cuneo and Mantova) 
+ 
+ 
+ 
+```{r echo = FALSE, message = FALSE, warning = FALSE}
+source("ReadAllData1.R")
+library(mgcv)
+
+
+italy_25$city_name <- as.factor(italy_25$city_name)
+
+
+#the two rt outliers
+italy_25 <- subset(italy_25, city_name!="Cuneo")
+italy_25 <- subset(italy_25, city_name!="Mantova")
+
+
+italy_25gam <- gam(log(rt1)~ city_name+
+                    s(home, k = 5)+s(pm25, k = 5) +s(med_temp, k=5) + s(med_hum, k=5), data = italy_25, family = gaussian)
+
+plot(italy_25gam, scale=0,se=2, shade=TRUE,pages=1, scheme = 2,main = "23 Cities in Italy")
+summary(italy_25gam)
+gam.check(italy_25gam)
+
+
+
+```
+
+
+
+
+
+
+
+
+
