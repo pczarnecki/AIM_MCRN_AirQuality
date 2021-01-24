@@ -8,7 +8,7 @@
 |-------------|-------------------------------------------------------------------------------------------------------------|
 | date        | YYYY-MM-DD format                                                                                           |
 | daily_cases | Positive COVID-19 tests                                                                                     |
-| med_temp    | Median temperature (<su>o</sup>F)                                                                     |
+| med_temp    | Median temperature (<sup>o</sup>F)                                                                     |
 | med_hum     | Median relative humidity (%)                                                                                |
 | pm25        | Median density of PM<sub>2.5</sub> (micrograms per meter cubed)                                             |
 | pm10        | Median density of PM<sub>10</sub> (micrograms per meter cubed)                                              |
