@@ -21,5 +21,5 @@
 | transit     | Change in visits to transit stations (%)                                                                    |
 | work        | Change in visits to workplaces (%)                                                                          |
 | home        | Change in visits to residential areas (%)                                                                   |
-| rt          | Median estimation of the effective reproduction number from <a href="http://rt.live"> rt.live </a>          |
+| rt          | Median estimate of the effective reproduction number from <a href="http://rt.live"> rt.live </a>            |
 | region      | Region where the province is located                                                                        |
