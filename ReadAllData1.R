@@ -25,12 +25,7 @@ for(city in Italy_Cities){
   assign(paste(city,"_total_all", sep = ""), cbind(city_get, city_name))
 }
 
-#commented out bc this was fixed
-#Lodi and Parma have date in different format, change to same format as other dataframes
-#Lodi_total_all$date <- as.Date(Lodi_total_all$date, format = "%m/%d/%y")
-#Parma_total_all$date <- as.Date(Parma_total_all$date, format = "%m/%d/%y")
-#Lodi_total_all$date <- as.character(Lodi_total_all$date)
-#Parma_total_all$date <- as.character(Parma_total_all$date)
+
 
 
 italy_25 <- bind_rows(Alessandria_total_all, Bergamo_total_all,     Bologna_total_all,    
@@ -64,19 +59,8 @@ italy_25$day_num = as.numeric(strftime(italy_25$date, format = "%j"))
   }
 city_names
 
-#Combine with rt2
-#Rt2 <- read_csv("~/Documents/ResearchCode/Air Quality COVID/Data/Rt2/Data/Rt2.csv")
-#Change Reggio_Emilia to Reggio
-
-#colnames(Rt2)[7] <- "Reggio"
-
-#Make the Rt2 data into long format
-#Rt2_long <- pivot_longer(Rt2, 4:28, names_to = "city_name", values_to = "rt")
-
-#Combine italy_25 and Rt2 by date and city
-#italy_Rt2 <- left_join(italy_25, Rt2_long, by = c("date", "city_name"))
-
-#plot rt2 for each city
-#ggplot(italy_Rt2, aes(x = date, y = rt, color = city_name))+geom_line()+labs(y = "Rt2")
-#plot rt live for each city
-#ggplot(italy_Rt2, aes(x = date, y = mean, color = city_name))+geom_line()+labs(y = "Rt")
+# remove cuneo and mantova
+italy_25 <- subset(italy_25, city_name!="Cuneo")
+italy_25 <- subset(italy_25, city_name!="Mantova")
+italy_25$city_name <- as.factor(italy_25$city_name)
+italy_25$state <- as.factor(italy_25$state)
