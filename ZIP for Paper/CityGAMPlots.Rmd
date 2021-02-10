@@ -13,22 +13,22 @@ library(tidyverse)
 library(cowplot)
 source("ReadAllData1.R")
 
-# make stat and city into factors
+# make state and city into factors
 italy_25$state <- as.factor(italy_25$state)
 italy_25$city_name <- as.factor(italy_25$city_name)
 
 #loop through and save gams
 city_names <-unique(italy_25$city_name)
 for(city in city_names){
-  assign( paste(city,"_gam", sep = ""), gam(log(rt1)~ 
-                    s(homer, k=5)+s(pm25, k = 5)+s(med_temp, k = 4)+s(med_hum, k = 4), data = italy_25[italy_25$city_name == city,], family = gaussian))}
+  assign( paste(city,"_gam", sep = ""), gam(log(rt)~ 
+                    s(home, k=5)+s(pm25, k = 5)+s(med_temp, k = 4)+s(med_hum, k = 4), data = italy_25[italy_25$city_name == city,], family = gaussian))}
 
 
 state_names <- unique(as.factor(italy_25$state))
 #loop through and save gams
 for(state in state_names){
-  assign( paste(state,"_gam", sep = ""), gam(log(rt1)~ 
-                    s(homer, k =5)+s(pm25, k = 5)+s(med_temp, k = 4)+s(med_hum, k = 4), data = italy_25[italy_25$state == state,], family = gaussian))}
+  assign( paste(state,"_gam", sep = ""), gam(log(rt)~ 
+                    s(home, k =5)+s(pm25, k = 5)+s(med_temp, k = 4)+s(med_hum, k = 4), data = italy_25[italy_25$state == state,], family = gaussian))}
 
 ```
 
@@ -180,7 +180,7 @@ range_statelist <- list(home = matrix(NA, length(evaluate_smooth(state_gam, smoo
 j = 0
 
 #get only the columns used for gam
-italy_small <- italy_25 %>% select(homer, pm25, med_temp, med_hum, state)
+italy_small <- italy_25 %>% select(home, pm25, med_temp, med_hum, state)
 for(state in state_names){
   j = j+1
   for(i in 1:4){

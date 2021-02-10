@@ -3,14 +3,14 @@ source("ReadAllData1.R")
 library(tidyverse)
 
 # get all environmental plus rt and mobility
-test_longer <-gather(italy_25, measurement, value, c(2:7,15,25,19))
+test_longer <-gather(italy_25, measurement, value, c(2:7,15,23,19))
 test_longer$Date <- test_longer$date
 
 # set names of facets
-test_longer$measurement <- factor(test_longer$measurement, levels = c("daily_cases", "homer", 
+test_longer$measurement <- factor(test_longer$measurement, levels = c("daily_cases", "home", 
                                                                       "med_hum", "med_temp",
                                                                       "no2", "o3", "pm10", 
-                                                                      "pm25", "rt1"), 
+                                                                      "pm25", "rt"), 
                                   labels = c(expression(paste("Daily Cases")), "Mobility", "Humidity", "Temperature",
                                              expression(NO[2]), expression(O[3]), pm10 = expression(PM[10]),
                                              expression(PM[2.5]), expression(R[t])))
@@ -24,13 +24,13 @@ ggplot(test_longer, aes(x = date, y = value, group = city_name, color = state)) 
 
 
 # get only vars used in model
-test_longer <-gather(italy_25, measurement, value, c(2:5,15,25))
+test_longer <-gather(italy_25, measurement, value, c(2:5,15,23))
 test_longer$Date <- test_longer$date
 
 # set names of facets
-test_longer$measurement <- factor(test_longer$measurement, levels = c("daily_cases", "homer", 
+test_longer$measurement <- factor(test_longer$measurement, levels = c("daily_cases", "home", 
                                                                       "med_hum", "med_temp",
-                                                                      "pm25", "rt1"), 
+                                                                      "pm25", "rt"), 
                                   labels = c(expression(paste("Daily Cases")), "Mobility", "Humidity", "Temperature",
                                              expression(PM[2.5]), expression(R[t])))
 

@@ -2,7 +2,8 @@
 library(dplyr)
 library(readr)
 library(tidyverse)
-path <- "Data/Combined Data/"
+#path <- "Data/Combined Data/"
+path <- "Data/"
 files <- list.files(path=path, pattern="*.csv")
 for(file in files){
   perpos <- which(strsplit(file, "")[[1]]==".")
@@ -30,8 +31,8 @@ for(city in Italy_Cities){
 
 italy_25 <- bind_rows(Alessandria_total_all, Bergamo_total_all,     Bologna_total_all,    
                        Bolzano_total_all,     Brescia_total_all,     Como_total_all,       
-                      Cremona_total_all,     Cuneo_total_all,       Firenze_total_all,    
-                       Lecco_total_all,       Lodi_total_all,        Mantova_total_all,    
+                      Cremona_total_all,            Firenze_total_all,    
+                       Lecco_total_all,       Lodi_total_all,        
                        Milano_total_all,      Modena_total_all,      Monza_total_all,      
                        Napoli_total_all,      Parma_total_all,       Pavia_total_all,      
                        Piacenza_total_all,    Reggio_Emilia_total_all,      Rimini_total_all,     
@@ -60,7 +61,8 @@ italy_25$day_num = as.numeric(strftime(italy_25$date, format = "%j"))
 city_names
 
 # remove cuneo and mantova
-italy_25 <- subset(italy_25, city_name!="Cuneo")
-italy_25 <- subset(italy_25, city_name!="Mantova")
+#italy_25 <- subset(italy_25, city_name!="Cuneo")
+#italy_25 <- subset(italy_25, city_name!="Mantova")
 italy_25$city_name <- as.factor(italy_25$city_name)
-italy_25$state <- as.factor(italy_25$state)
+italy_25$state <- as.factor(italy_25$region)
+

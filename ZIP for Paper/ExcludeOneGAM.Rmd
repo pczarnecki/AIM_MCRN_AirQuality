@@ -20,7 +20,7 @@ library(ggplot2)
 city_names <- unique(italy_25$city_name)
 for (city in city_names) {
   new_data = subset(italy_25, city_name!=city)
-  assign( paste(city,"_exclude_gam", sep = ""), gam(log(rt1)~ 
+  assign( paste(city,"_exclude_gam", sep = ""), gam(log(rt)~ 
                     s(home, k = 5)+s(pm25, k = 5)+s(med_temp, k = 4)+s(med_hum, k = 4) , data = new_data, family = gaussian))
 
  plot(get(paste(city, "_exclude_gam", sep = "")),scale=0,se=2, shade=TRUE,pages=1, scheme = 2, main = city)
@@ -31,20 +31,20 @@ for (city in city_names) {
 ```{r}
 
 i = 0
-pred_mat <- matrix(NA, length(city_data$rt1), length(city_names))
-true_mat <- matrix(NA, length(city_data$rt1), length(city_names))
+pred_mat <- matrix(NA, length(city_data$rt), length(city_names))
+true_mat <- matrix(NA, length(city_data$rt), length(city_names))
 
-pred_cases <- rep(NA, length(city_data$rt1))
-mse <- rep(NA, length(city_data$rt1))
+pred_cases <- rep(NA, length(city_data$rt))
+mse <- rep(NA, length(city_data$rt))
 for (city in city_names) {
   i = i + 1
   city_data = subset(italy_25, city_name==city)
   city_gam <- get(paste(city, "_exclude_gam", sep = ""))
   pred_cases <- predict(city_gam,city_data, se.fit = TRUE)
-  mse[i] <- sum((exp(pred_cases$fit) - city_data$rt1)^2, na.rm = T)/length(city_data$rt1)
+  mse[i] <- sum((exp(pred_cases$fit) - city_data$rt)^2, na.rm = T)/length(city_data$rt)
   #mse2[i] <- pred_cases$se.fit
- #plot(y=exp(pred_cases$fit), x=city_data$rt1, pch = 16, xlab = "True", ylab = "Predicted",main = city)
-  df <- data.frame("Predicted" = exp(pred_cases$fit), "True" = city_data$rt1, "Date" =city_data$date)
+ #plot(y=exp(pred_cases$fit), x=city_data$rt, pch = 16, xlab = "True", ylab = "Predicted",main = city)
+  df <- data.frame("Predicted" = exp(pred_cases$fit), "True" = city_data$rt, "Date" =city_data$date)
   #df_long <- pivot_longer(df, 1:2, names_to = "Method", values_to = "R_e")
   
 
