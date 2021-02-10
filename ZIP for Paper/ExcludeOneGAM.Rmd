@@ -1,0 +1,56 @@
+---
+title: "Excluded City Plots"
+author: "Laura Albrecht"
+date: "8/27/2020"
+output:
+  html_document: default
+  pdf_document: default
+---
+Using that GAM to predict the excluded city's outcome:
+```{r echo = FALSE, message = FALSE}
+
+source("ReadAllData1.R")
+library(mgcv)
+library(ggplot2)
+#library(tidyverse)
+
+```
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+city_names <- unique(italy_25$city_name)
+for (city in city_names) {
+  new_data = subset(italy_25, city_name!=city)
+  assign( paste(city,"_exclude_gam", sep = ""), gam(log(rt1)~ 
+                    s(home, k = 5)+s(pm25, k = 5)+s(med_temp, k = 4)+s(med_hum, k = 4) , data = new_data, family = gaussian))
+
+ plot(get(paste(city, "_exclude_gam", sep = "")),scale=0,se=2, shade=TRUE,pages=1, scheme = 2, main = city)
+
+}
+```
+
+```{r}
+
+i = 0
+pred_mat <- matrix(NA, length(city_data$rt1), length(city_names))
+true_mat <- matrix(NA, length(city_data$rt1), length(city_names))
+
+pred_cases <- rep(NA, length(city_data$rt1))
+mse <- rep(NA, length(city_data$rt1))
+for (city in city_names) {
+  i = i + 1
+  city_data = subset(italy_25, city_name==city)
+  city_gam <- get(paste(city, "_exclude_gam", sep = ""))
+  pred_cases <- predict(city_gam,city_data, se.fit = TRUE)
+  mse[i] <- sum((exp(pred_cases$fit) - city_data$rt1)^2, na.rm = T)/length(city_data$rt1)
+  #mse2[i] <- pred_cases$se.fit
+ #plot(y=exp(pred_cases$fit), x=city_data$rt1, pch = 16, xlab = "True", ylab = "Predicted",main = city)
+  df <- data.frame("Predicted" = exp(pred_cases$fit), "True" = city_data$rt1, "Date" =city_data$date)
+  #df_long <- pivot_longer(df, 1:2, names_to = "Method", values_to = "R_e")
+  
+
+plot_city <- suppressWarnings( ggplot(df) + geom_point(aes(x = True, y = Predicted))+ geom_abline(slope =1, intercept = 0, color = "red") + theme_classic()+ggtitle(label = city))
+
+
+print(plot_city)
+}
+```
