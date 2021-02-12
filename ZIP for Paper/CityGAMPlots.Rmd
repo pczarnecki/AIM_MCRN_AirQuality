@@ -11,6 +11,7 @@ library(mgcv)
 library(gratia)
 library(tidyverse)
 library(cowplot)
+library(fda)
 source("ReadAllData1.R")
 
 # make state and city into factors

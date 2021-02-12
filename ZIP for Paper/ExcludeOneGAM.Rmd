@@ -29,7 +29,7 @@ for (city in city_names) {
 ```
 
 ```{r}
-
+city_data = subset(italy_25, city_name=="Roma")
 i = 0
 pred_mat <- matrix(NA, length(city_data$rt), length(city_names))
 true_mat <- matrix(NA, length(city_data$rt), length(city_names))
