@@ -2,7 +2,6 @@
 library(dplyr)
 library(readr)
 library(tidyverse)
-#path <- "Data/Combined Data/"
 path <- "Data/"
 files <- list.files(path=path, pattern="*.csv")
 for(file in files){

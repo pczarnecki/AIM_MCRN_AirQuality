@@ -7,7 +7,7 @@ test_longer <-gather(italy_25, measurement, value, c(2:7,15,23,19))
 test_longer$Date <- test_longer$date
 
 # set names of facets
-test_longer$measurement <- factor(test_longer$measurement, levels = c("daily_cases", "home", 
+test_longer$measurement <- factor(test_longer$measurement, levels = c("daily_cases", "homer", 
                                                                       "med_hum", "med_temp",
                                                                       "no2", "o3", "pm10", 
                                                                       "pm25", "rt"), 
@@ -28,7 +28,7 @@ test_longer <-gather(italy_25, measurement, value, c(2:5,15,23))
 test_longer$Date <- test_longer$date
 
 # set names of facets
-test_longer$measurement <- factor(test_longer$measurement, levels = c("daily_cases", "home", 
+test_longer$measurement <- factor(test_longer$measurement, levels = c("daily_cases", "homer", 
                                                                       "med_hum", "med_temp",
                                                                       "pm25", "rt"), 
                                   labels = c(expression(paste("Daily Cases")), "Mobility", "Humidity", "Temperature",
