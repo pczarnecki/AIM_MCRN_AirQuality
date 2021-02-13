@@ -3,7 +3,7 @@ source("ReadAllData1.R")
 library(tidyverse)
 
 # get all environmental plus rt and mobility
-test_longer <-gather(italy_25, measurement, value, c(2:7,15,23,19))
+test_longer <-gather(italy_25, measurement, value, c(2:7,13,14,17))
 test_longer$Date <- test_longer$date
 
 # set names of facets
@@ -24,7 +24,7 @@ ggplot(test_longer, aes(x = date, y = value, group = province_name, color = regi
 
 
 # get only vars used in model
-test_longer <-gather(italy_25, measurement, value, c(2:5,15,23))
+test_longer <-gather(italy_25, measurement, value, c(2:5,13,14))
 test_longer$Date <- test_longer$date
 
 # set names of facets

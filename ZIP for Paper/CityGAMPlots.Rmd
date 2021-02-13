@@ -11,7 +11,7 @@ library(mgcv)
 library(gratia)
 library(tidyverse)
 library(cowplot)
-library(fda)
+
 source("ReadAllData1.R")
 
 # make region and province into factors
@@ -34,6 +34,10 @@ for(region in region_names){
 ```
 
 ```{r}
+
+region_gam <- gam(log(rt) ~s(homer, k = 5)+s(pm25, k = 5)+s(med_temp, k =4) +s(med_hum, k=4), data = italy_25, family = gaussian)
+
+
 province_plot_list <- list(home = matrix(NA, length(evaluate_smooth(region_gam, smooth = unique(smooths(region_gam))[1])$est), length(province_names)), pm25 = matrix(NA, length(evaluate_smooth(region_gam, smooth = unique(smooths(region_gam))[1])$est), length(province_names)), temperature = matrix(NA, length(evaluate_smooth(region_gam, smooth = unique(smooths(region_gam))[1])$est), length(province_names)), humidity = matrix(NA, length(evaluate_smooth(region_gam, smooth = unique(smooths(region_gam))[1])$est), length(province_names)))
 
 province_se_list <- list(home = matrix(NA, length(evaluate_smooth(region_gam, smooth = unique(smooths(region_gam))[1])$est), length(province_names)), pm25 = matrix(NA, length(evaluate_smooth(region_gam, smooth = unique(smooths(region_gam))[1])$est), length(province_names)), temperature = matrix(NA, length(evaluate_smooth(region_gam, smooth = unique(smooths(region_gam))[1])$est), length(province_names)), humidity = matrix(NA, length(evaluate_smooth(region_gam, smooth = unique(smooths(region_gam))[1])$est), length(province_names)))
@@ -43,7 +47,7 @@ range_list <- list(home = matrix(NA, length(evaluate_smooth(region_gam, smooth =
 j = 0
 
 #get only the columns used for gam
-italy_small <- italy_25 %>% select(home, pm25, med_temp, med_hum, province_name)
+italy_small <- italy_25 %>% select(homer, pm25, med_temp, med_hum, province_name)
 for(province in province_names){
   j = j+1
   for(i in 1:4){
@@ -166,9 +170,7 @@ plot_grid(p4, legend_b, ncol = 1,rel_heights = c(1,.1))
 ```
 
 
-```{r}
-#grid.arrange(gg_home, gg_pm25, gg_temp, gg_humid, nrow =2, ncol = 2)
-```
+
 
 ```{r}
 # same analysis by region instead of province
@@ -225,7 +227,7 @@ gg_home <- ggplot(dfhome_all2, aes(x_val, y_val, color = region))+geom_line(alph
 
 
 dfpm25 <- data.frame(region_plot_list[[2]])
-fbplot(dfpm25, ylab = "PM2.5")
+
 names(dfpm25) <- region_names
 dfpm25$time = 1:100
 dfpm25<- pivot_longer(dfpm25,1:8 , names_to = "region", values_to = "y_val")
