@@ -64,4 +64,4 @@ city_names
 #italy_25 <- subset(italy_25, city_name!="Mantova")
 italy_25$city_name <- as.factor(italy_25$city_name)
 italy_25$state <- as.factor(italy_25$region)
-
+italy_25$homer <- -(italy_25$home) 

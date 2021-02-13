@@ -24,7 +24,7 @@ italy_25$city_name <- as.factor(italy_25$city_name)
 
 
 
-state_gam <- gam(log(rt) ~s(home, k = 5)+s(pm25, k = 5)+s(med_temp, k =4) +s(med_hum, k=4), data = italy_25, family = gaussian)
+state_gam <- gam(log(rt) ~s(homer, k = 5)+s(pm25, k = 5)+s(med_temp, k =4) +s(med_hum, k=4)  + city_name, data = italy_25, family = gaussian)
 
 # plot model output
 draw(state_gam)
@@ -100,7 +100,7 @@ mydraw.gam <- function (object, parametric = TRUE, select = NULL, scales = c("fr
 p <- mydraw.gam(state_gam)
 
 # customize plot labels
-p[[1]] <- p[[1]] + labs(title = "% Change Mobility", x ="") + geom_rug(italy_25, mapping = aes(x = home), inherit.aes = F) + theme_bw() + theme(title = element_text(size = 22), axis.text = element_text(size = 16))
+p[[1]] <- p[[1]] + labs(title = "% Change Mobility", x ="") + geom_rug(italy_25, mapping = aes(x = homer), inherit.aes = F) + theme_bw() + theme(title = element_text(size = 22), axis.text = element_text(size = 16))
 
 p[[2]] <- p[[2]]  + labs(x = "", title = expression(paste("PM"[2.5], " (", mu,"g/m"^3, ")"))) + geom_rug(italy_25[italy_25$pm25 < 170,], mapping = aes(x = pm25), inherit.aes = F) + theme_bw() + theme(title= element_text(size = 22), axis.text = element_text(size = 16))
 
