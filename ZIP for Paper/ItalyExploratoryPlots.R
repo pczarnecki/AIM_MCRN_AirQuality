@@ -16,7 +16,7 @@ test_longer$measurement <- factor(test_longer$measurement, levels = c("daily_cas
                                              expression(PM[2.5]), expression(R[t])))
 
 # plot all 9 variables
-ggplot(test_longer, aes(x = date, y = value, group = city_name, color = state)) + 
+ggplot(test_longer, aes(x = date, y = value, group = province_name, color = region)) + 
   geom_line() + facet_wrap(.~measurement, scales = "free_y", labeller = label_parsed) + 
   ggtitle("Italy") + theme_bw() +  theme(legend.position = "bottom", text = element_text(size = 14)) + 
   labs(x = "Date", y = "Value", color = "Region") + 
@@ -35,7 +35,7 @@ test_longer$measurement <- factor(test_longer$measurement, levels = c("daily_cas
                                              expression(PM[2.5]), expression(R[t])))
 
 # plot variables in model
-ggplot(test_longer, aes(x = date, y = value, group = city_name, color = state)) + 
+ggplot(test_longer, aes(x = date, y = value, group = province_name, color = region)) + 
   geom_line() + facet_wrap(.~measurement, scales = "free_y", labeller = label_parsed) + 
   ggtitle("Italy") + theme_bw() +  theme(legend.position = "bottom", text = element_text(size = 14)) + 
   labs(x = "Date", y = "Value", color = "Region") + 

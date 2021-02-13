@@ -18,16 +18,16 @@ library(mgcv)
 library(gratia)
 library(gridExtra)
 
-# make stat and city into factors
-italy_25$state <- as.factor(italy_25$state)
-italy_25$city_name <- as.factor(italy_25$city_name)
+# make stat and province into factors
+italy_25$region <- as.factor(italy_25$region)
+italy_25$province_name <- as.factor(italy_25$province_name)
 
 
 
-state_gam <- gam(log(rt) ~s(homer, k = 5)+s(pm25, k = 5)+s(med_temp, k =4) +s(med_hum, k=4)  + city_name, data = italy_25, family = gaussian)
+region_gam <- gam(log(rt) ~s(homer, k = 5)+s(pm25, k = 5)+s(med_temp, k =4) +s(med_hum, k=4)  + province_name, data = italy_25, family = gaussian)
 
 # plot model output
-draw(state_gam)
+draw(region_gam)
 
 ```
 
@@ -97,7 +97,7 @@ mydraw.gam <- function (object, parametric = TRUE, select = NULL, scales = c("fr
     }
     g
 }
-p <- mydraw.gam(state_gam)
+p <- mydraw.gam(region_gam)
 
 # customize plot labels
 p[[1]] <- p[[1]] + labs(title = "% Change Mobility", x ="") + geom_rug(italy_25, mapping = aes(x = homer), inherit.aes = F) + theme_bw() + theme(title = element_text(size = 22), axis.text = element_text(size = 16))

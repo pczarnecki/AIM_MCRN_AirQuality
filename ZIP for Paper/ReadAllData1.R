@@ -18,11 +18,11 @@ for(i in 1:length(files)){
   
 }
 
-for(city in Italy_Cities){
-  city_get <- get(city)
-  city_name <- strsplit(city, "_")[[1]][1]
-  city_name <- rep(city_name, length(city_get[,1]))
-  assign(paste(city,"_total_all", sep = ""), cbind(city_get, city_name))
+for(province in Italy_Cities){
+  province_get <- get(province)
+  province_name <- strsplit(province, "_")[[1]][1]
+  province_name <- rep(province_name, length(province_get[,1]))
+  assign(paste(province,"_total_all", sep = ""), cbind(province_get, province_name))
 }
 
 
@@ -52,16 +52,16 @@ italy_25$day_num = as.numeric(strftime(italy_25$date, format = "%j"))
                                                                         "Thursday", "Friday", "Saturday", "Sunday"),
                                          ordered = TRUE))
 
- #Create list of city names to loop through for GAM
- city_names <- rep(NA, length(Italy_Cities))
+ #Create list of province names to loop through for GAM
+ province_names <- rep(NA, length(Italy_Cities))
  for(i in 1:length(Italy_Cities)){
-  city_names[i] <- strsplit(Italy_Cities[i], "_")[[1]][1]
+  province_names[i] <- strsplit(Italy_Cities[i], "_")[[1]][1]
   }
-city_names
+province_names
 
 # remove cuneo and mantova
-#italy_25 <- subset(italy_25, city_name!="Cuneo")
-#italy_25 <- subset(italy_25, city_name!="Mantova")
-italy_25$city_name <- as.factor(italy_25$city_name)
-italy_25$state <- as.factor(italy_25$region)
+#italy_25 <- subset(italy_25, province_name!="Cuneo")
+#italy_25 <- subset(italy_25, province_name!="Mantova")
+italy_25$province_name <- as.factor(italy_25$province_name)
+italy_25$region <- as.factor(italy_25$region)
 italy_25$homer <- -(italy_25$home) 

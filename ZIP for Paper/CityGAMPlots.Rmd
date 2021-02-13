@@ -14,101 +14,101 @@ library(cowplot)
 library(fda)
 source("ReadAllData1.R")
 
-# make state and city into factors
-italy_25$state <- as.factor(italy_25$state)
-italy_25$city_name <- as.factor(italy_25$city_name)
+# make region and province into factors
+italy_25$region <- as.factor(italy_25$region)
+italy_25$province_name <- as.factor(italy_25$province_name)
 
 #loop through and save gams
-city_names <-unique(italy_25$city_name)
-for(city in city_names){
-  assign( paste(city,"_gam", sep = ""), gam(log(rt)~ 
-                    s(homer, k=5)+s(pm25, k = 5)+s(med_temp, k = 4)+s(med_hum, k = 4), data = italy_25[italy_25$city_name == city,], family = gaussian))}
+province_names <-unique(italy_25$province_name)
+for(province in province_names){
+  assign( paste(province,"_gam", sep = ""), gam(log(rt)~ 
+                    s(homer, k=5)+s(pm25, k = 5)+s(med_temp, k = 4)+s(med_hum, k = 4), data = italy_25[italy_25$province_name == province,], family = gaussian))}
 
 
-state_names <- unique(as.factor(italy_25$state))
+region_names <- unique(as.factor(italy_25$region))
 #loop through and save gams
-for(state in state_names){
-  assign( paste(state,"_gam", sep = ""), gam(log(rt)~ 
-                    s(homer, k =5)+s(pm25, k = 5)+s(med_temp, k = 4)+s(med_hum, k = 4), data = italy_25[italy_25$state == state,], family = gaussian))}
+for(region in region_names){
+  assign( paste(region,"_gam", sep = ""), gam(log(rt)~ 
+                    s(homer, k =5)+s(pm25, k = 5)+s(med_temp, k = 4)+s(med_hum, k = 4), data = italy_25[italy_25$region == region,], family = gaussian))}
 
 ```
 
 ```{r}
-city_plot_list <- list(home = matrix(NA, length(evaluate_smooth(state_gam, smooth = unique(smooths(state_gam))[1])$est), length(city_names)), pm25 = matrix(NA, length(evaluate_smooth(state_gam, smooth = unique(smooths(state_gam))[1])$est), length(city_names)), temperature = matrix(NA, length(evaluate_smooth(state_gam, smooth = unique(smooths(state_gam))[1])$est), length(city_names)), humidity = matrix(NA, length(evaluate_smooth(state_gam, smooth = unique(smooths(state_gam))[1])$est), length(city_names)))
+province_plot_list <- list(home = matrix(NA, length(evaluate_smooth(region_gam, smooth = unique(smooths(region_gam))[1])$est), length(province_names)), pm25 = matrix(NA, length(evaluate_smooth(region_gam, smooth = unique(smooths(region_gam))[1])$est), length(province_names)), temperature = matrix(NA, length(evaluate_smooth(region_gam, smooth = unique(smooths(region_gam))[1])$est), length(province_names)), humidity = matrix(NA, length(evaluate_smooth(region_gam, smooth = unique(smooths(region_gam))[1])$est), length(province_names)))
 
-city_se_list <- list(home = matrix(NA, length(evaluate_smooth(state_gam, smooth = unique(smooths(state_gam))[1])$est), length(city_names)), pm25 = matrix(NA, length(evaluate_smooth(state_gam, smooth = unique(smooths(state_gam))[1])$est), length(city_names)), temperature = matrix(NA, length(evaluate_smooth(state_gam, smooth = unique(smooths(state_gam))[1])$est), length(city_names)), humidity = matrix(NA, length(evaluate_smooth(state_gam, smooth = unique(smooths(state_gam))[1])$est), length(city_names)))
+province_se_list <- list(home = matrix(NA, length(evaluate_smooth(region_gam, smooth = unique(smooths(region_gam))[1])$est), length(province_names)), pm25 = matrix(NA, length(evaluate_smooth(region_gam, smooth = unique(smooths(region_gam))[1])$est), length(province_names)), temperature = matrix(NA, length(evaluate_smooth(region_gam, smooth = unique(smooths(region_gam))[1])$est), length(province_names)), humidity = matrix(NA, length(evaluate_smooth(region_gam, smooth = unique(smooths(region_gam))[1])$est), length(province_names)))
 
-range_list <- list(home = matrix(NA, length(evaluate_smooth(state_gam, smooth = unique(smooths(state_gam))[1])$est), length(city_names)), pm25 = matrix(NA, length(evaluate_smooth(state_gam, smooth = unique(smooths(state_gam))[1])$est), length(city_names)), temperature = matrix(NA, length(evaluate_smooth(state_gam, smooth = unique(smooths(state_gam))[1])$est), length(city_names)), humidity = matrix(NA, length(evaluate_smooth(state_gam, smooth = unique(smooths(state_gam))[1])$est), length(city_names)))
-#city_plot_list <- list(home = matrix(NA, 160, length(city_names)), pm25 = matrix(NA, 160, length(city_names)), temperature = matrix(NA, 160, length(city_names)), humidity = matrix(NA, 160, length(city_names)))
+range_list <- list(home = matrix(NA, length(evaluate_smooth(region_gam, smooth = unique(smooths(region_gam))[1])$est), length(province_names)), pm25 = matrix(NA, length(evaluate_smooth(region_gam, smooth = unique(smooths(region_gam))[1])$est), length(province_names)), temperature = matrix(NA, length(evaluate_smooth(region_gam, smooth = unique(smooths(region_gam))[1])$est), length(province_names)), humidity = matrix(NA, length(evaluate_smooth(region_gam, smooth = unique(smooths(region_gam))[1])$est), length(province_names)))
+#province_plot_list <- list(home = matrix(NA, 160, length(province_names)), pm25 = matrix(NA, 160, length(province_names)), temperature = matrix(NA, 160, length(province_names)), humidity = matrix(NA, 160, length(province_names)))
 j = 0
 
 #get only the columns used for gam
-italy_small <- italy_25 %>% select(home, pm25, med_temp, med_hum, city_name)
-for(city in city_names){
+italy_small <- italy_25 %>% select(home, pm25, med_temp, med_hum, province_name)
+for(province in province_names){
   j = j+1
   for(i in 1:4){
     
-temp_gam <- get(paste(city, "_gam", sep = ""))
-#city_plot_list[[i]][,j] <- evaluate_smooth(temp_gam, smooth = unique(smooths(state_gam))[i], newdata = italy_small[italy_small$city_name == city,i])$est
+temp_gam <- get(paste(province, "_gam", sep = ""))
+#province_plot_list[[i]][,j] <- evaluate_smooth(temp_gam, smooth = unique(smooths(region_gam))[i], newdata = italy_small[italy_small$province_name == province,i])$est
 
-#temp_gam <- get(paste(city, "_gam", sep = ""))
-city_plot_list[[i]][,j] <- evaluate_smooth(temp_gam, smooth = unique(smooths(state_gam))[i])$est
+#temp_gam <- get(paste(province, "_gam", sep = ""))
+province_plot_list[[i]][,j] <- evaluate_smooth(temp_gam, smooth = unique(smooths(region_gam))[i])$est
 
-city_se_list[[i]][,j] <- evaluate_smooth(temp_gam, smooth = unique(smooths(state_gam))[i])$se
+province_se_list[[i]][,j] <- evaluate_smooth(temp_gam, smooth = unique(smooths(region_gam))[i])$se
 
-range_list[[i]][,j] <- seq(min(italy_small[italy_small$city_name == city,i], na.rm = TRUE), max(italy_small[italy_small$city_name == city,i], na.rm =  TRUE), , 100)
+range_list[[i]][,j] <- seq(min(italy_small[italy_small$province_name == province,i], na.rm = TRUE), max(italy_small[italy_small$province_name == province,i], na.rm =  TRUE), , 100)
   }
 }
 ```
 
 ```{r}
-dfhome <- data.frame(city_plot_list[[1]])
+dfhome <- data.frame(province_plot_list[[1]])
 
-names(dfhome) <- city_names
+names(dfhome) <- province_names
 dfhome$time = 1:100
 dfhome <- pivot_longer(dfhome,1:23 , names_to = "Province", values_to = "y_val")
 
 # do the same for the error
-dfhomese <- data.frame(city_se_list[[1]])
-names(dfhomese) <- city_names
+dfhomese <- data.frame(province_se_list[[1]])
+names(dfhomese) <- province_names
 dfhomese$time = 1:100
 dfhomese <- pivot_longer(dfhomese,1:23 , names_to = "Province", values_to = "y_se")
 
 homex <- data.frame(range_list[[1]])
-names(homex) <-city_names
+names(homex) <-province_names
 homex$time = 1:100
 homex <- pivot_longer(homex, 1:23, names_to = "Province", values_to = "x_val")
 
 dfhome_all <- full_join(homex, dfhome)
 
 dfhome_all2 <- full_join(dfhome_all, dfhomese)
-dfhome_all2 <- left_join(dfhome_all2, italy_25[,c("city_name", "state")], by = c("Province" = "city_name"))
+dfhome_all2 <- left_join(dfhome_all2, italy_25[,c("province_name", "region")], by = c("Province" = "province_name"))
 
-gg_home <- ggplot(dfhome_all2, aes(x_val, y_val, group = Province, color = state))+geom_line()+ labs(title = "% Change Mobility", y = "Effect", x = "")  +theme_bw()+ theme(text = element_text(size = 14), legend.position = "none")
+gg_home <- ggplot(dfhome_all2, aes(x_val, y_val, group = Province, color = region))+geom_line()+ labs(title = "% Change Mobility", y = "Effect", x = "")  +theme_bw()+ theme(text = element_text(size = 14), legend.position = "none")
 
 #pm25 plot
-dfpm25 <- data.frame(city_plot_list[[2]])
+dfpm25 <- data.frame(province_plot_list[[2]])
 
-names(dfpm25) <- city_names
+names(dfpm25) <- province_names
 dfpm25$time = 1:100
 dfpm25<- pivot_longer(dfpm25,1:23 , names_to = "Province", values_to = "y_val")
 pm25x <- data.frame(range_list[[2]])
-names(pm25x) <-city_names
+names(pm25x) <-province_names
 pm25x$time = 1:100
 pm25x <- pivot_longer(pm25x, 1:23, names_to = "Province", values_to = "x_val")
 
 dfpm25_all <- full_join(pm25x, dfpm25)
 
-dfpm25se <- data.frame(city_se_list[[2]])
-names(dfpm25se) <- city_names
+dfpm25se <- data.frame(province_se_list[[2]])
+names(dfpm25se) <- province_names
 dfpm25se$time = 1:100
 dfpm25se <- pivot_longer(dfpm25se,1:23 , names_to = "Province", values_to = "y_se")
 
 dfpm25_all2 <- full_join(dfpm25_all, dfpm25se)
 
-dfpm25_all2 <- left_join(dfpm25_all2, italy_25[,c("city_name", "state")], by = c("Province" = "city_name"))
+dfpm25_all2 <- left_join(dfpm25_all2, italy_25[,c("province_name", "region")], by = c("Province" = "province_name"))
 
-gg_pm25 <- ggplot(dfpm25_all2, aes(x_val, y_val, group= Province, color = state))+geom_line() + labs(x = "", title = expression(paste("PM"[2.5], " (", mu,"g/m"^3, ")")), y = "", color = "Region") +theme_bw() + theme(text = element_text(size = 14), legend.position = "none")
+gg_pm25 <- ggplot(dfpm25_all2, aes(x_val, y_val, group= Province, color = region))+geom_line() + labs(x = "", title = expression(paste("PM"[2.5], " (", mu,"g/m"^3, ")")), y = "", color = "Region") +theme_bw() + theme(text = element_text(size = 14), legend.position = "none")
 
 
 # extract a legend that is laid out horizontally
@@ -121,39 +121,39 @@ legend_b <- get_legend(
 
 
 #plot for temp
-dftemp <- data.frame(city_plot_list[[3]])
+dftemp <- data.frame(province_plot_list[[3]])
 
-names(dftemp) <- city_names
+names(dftemp) <- province_names
 dftemp$time = 1:100
 
 dftemp<- pivot_longer(dftemp,1:23 , names_to = "Province", values_to = "y_val")
 tempx <- data.frame(range_list[[3]])
-names(tempx) <-city_names
+names(tempx) <-province_names
 tempx$time = 1:100
 tempx <- pivot_longer(tempx, 1:23, names_to = "Province", values_to = "x_val")
 
 dftemp_all <- full_join(tempx, dftemp)
-dftemp_all <- left_join(dftemp_all, italy_25[,c("city_name", "state")], by = c("Province" = "city_name"))
+dftemp_all <- left_join(dftemp_all, italy_25[,c("province_name", "region")], by = c("Province" = "province_name"))
 
-gg_temp <- ggplot(dftemp_all, aes(x_val, y_val, group = Province, color = state))+geom_line()+labs(x = "", title = expression(paste("Temperature ", ( degree*C))), y = "Effect")  + theme_bw() + theme(text = element_text(size = 14), legend.position = "none")
+gg_temp <- ggplot(dftemp_all, aes(x_val, y_val, group = Province, color = region))+geom_line()+labs(x = "", title = expression(paste("Temperature ", ( degree*C))), y = "Effect")  + theme_bw() + theme(text = element_text(size = 14), legend.position = "none")
 
 
 # plot for humidity
-dfhumid <- data.frame(city_plot_list[[4]])
+dfhumid <- data.frame(province_plot_list[[4]])
 
-names(dfhumid) <- city_names
+names(dfhumid) <- province_names
 dfhumid$time = 1:100
 
 dfhumid<- pivot_longer(dfhumid,1:23 , names_to = "Province", values_to = "y_val")
 humidx <- data.frame(range_list[[4]])
-names(humidx) <-city_names
+names(humidx) <-province_names
 humidx$time = 1:100
 humidx <- pivot_longer(humidx, 1:23, names_to = "Province", values_to = "x_val")
 
 dfhumid_all <- full_join(humidx, dfhumid)
-dfhumid_all <- left_join(dfhumid_all, italy_25[,c("city_name", "state")], by = c("Province" = "city_name"))
+dfhumid_all <- left_join(dfhumid_all, italy_25[,c("province_name", "region")], by = c("Province" = "province_name"))
 
-gg_humid <- ggplot(dfhumid_all, aes(x_val, y_val, group = Province, color = state))+geom_line()+labs(x = "", title = "% Humidity", y = "") + theme_bw() + theme(text = element_text(size = 14), legend.position = "none")
+gg_humid <- ggplot(dfhumid_all, aes(x_val, y_val, group = Province, color = region))+geom_line()+labs(x = "", title = "% Humidity", y = "") + theme_bw() + theme(text = element_text(size = 14), legend.position = "none")
 
 # plot all 4
 p4 <- plot_grid(gg_home, gg_pm25, gg_temp, gg_humid, ncol = 2)
@@ -171,30 +171,30 @@ plot_grid(p4, legend_b, ncol = 1,rel_heights = c(1,.1))
 ```
 
 ```{r}
-# same analysis by region instead of city
-state_plot_list <- list(home = matrix(NA, length(evaluate_smooth(state_gam, smooth = unique(smooths(state_gam))[1])$est), length(state_names)), pm25 = matrix(NA, length(evaluate_smooth(state_gam, smooth = unique(smooths(state_gam))[1])$est), length(state_names)), temperature = matrix(NA, length(evaluate_smooth(state_gam, smooth = unique(smooths(state_gam))[1])$est), length(state_names)), humidity = matrix(NA, length(evaluate_smooth(state_gam, smooth = unique(smooths(state_gam))[1])$est), length(state_names)))
+# same analysis by region instead of province
+region_plot_list <- list(home = matrix(NA, length(evaluate_smooth(region_gam, smooth = unique(smooths(region_gam))[1])$est), length(region_names)), pm25 = matrix(NA, length(evaluate_smooth(region_gam, smooth = unique(smooths(region_gam))[1])$est), length(region_names)), temperature = matrix(NA, length(evaluate_smooth(region_gam, smooth = unique(smooths(region_gam))[1])$est), length(region_names)), humidity = matrix(NA, length(evaluate_smooth(region_gam, smooth = unique(smooths(region_gam))[1])$est), length(region_names)))
 
-state_se_list <- list(home = matrix(NA, length(evaluate_smooth(state_gam, smooth = unique(smooths(state_gam))[1])$est), length(state_names)), pm25 = matrix(NA, length(evaluate_smooth(state_gam, smooth = unique(smooths(state_gam))[1])$est), length(state_names)), temperature = matrix(NA, length(evaluate_smooth(state_gam, smooth = unique(smooths(state_gam))[1])$est), length(state_names)), humidity = matrix(NA, length(evaluate_smooth(state_gam, smooth = unique(smooths(state_gam))[1])$est), length(state_names)))
+region_se_list <- list(home = matrix(NA, length(evaluate_smooth(region_gam, smooth = unique(smooths(region_gam))[1])$est), length(region_names)), pm25 = matrix(NA, length(evaluate_smooth(region_gam, smooth = unique(smooths(region_gam))[1])$est), length(region_names)), temperature = matrix(NA, length(evaluate_smooth(region_gam, smooth = unique(smooths(region_gam))[1])$est), length(region_names)), humidity = matrix(NA, length(evaluate_smooth(region_gam, smooth = unique(smooths(region_gam))[1])$est), length(region_names)))
 
-range_statelist <- list(home = matrix(NA, length(evaluate_smooth(state_gam, smooth = unique(smooths(state_gam))[1])$est), length(state_names)), pm25 = matrix(NA, length(evaluate_smooth(state_gam, smooth = unique(smooths(state_gam))[1])$est), length(state_names)), temperature = matrix(NA, length(evaluate_smooth(state_gam, smooth = unique(smooths(state_gam))[1])$est), length(state_names)), humidity = matrix(NA, length(evaluate_smooth(state_gam, smooth = unique(smooths(state_gam))[1])$est), length(state_names)))
+range_regionlist <- list(home = matrix(NA, length(evaluate_smooth(region_gam, smooth = unique(smooths(region_gam))[1])$est), length(region_names)), pm25 = matrix(NA, length(evaluate_smooth(region_gam, smooth = unique(smooths(region_gam))[1])$est), length(region_names)), temperature = matrix(NA, length(evaluate_smooth(region_gam, smooth = unique(smooths(region_gam))[1])$est), length(region_names)), humidity = matrix(NA, length(evaluate_smooth(region_gam, smooth = unique(smooths(region_gam))[1])$est), length(region_names)))
 
 j = 0
 
 #get only the columns used for gam
-italy_small <- italy_25 %>% select(homer, pm25, med_temp, med_hum, state)
-for(state in state_names){
+italy_small <- italy_25 %>% select(homer, pm25, med_temp, med_hum, region)
+for(region in region_names){
   j = j+1
   for(i in 1:4){
     
-temp_gam <- get(paste(state, "_gam", sep = ""))
-#city_plot_list[[i]][,j] <- evaluate_smooth(temp_gam, smooth = unique(smooths(state_gam))[i], newdata = italy_small[italy_small$state == city,i])$est
+temp_gam <- get(paste(region, "_gam", sep = ""))
+#province_plot_list[[i]][,j] <- evaluate_smooth(temp_gam, smooth = unique(smooths(region_gam))[i], newdata = italy_small[italy_small$region == province,i])$est
 
-#temp_gam <- get(paste(city, "_gam", sep = ""))
-state_plot_list[[i]][,j] <- evaluate_smooth(temp_gam, smooth = unique(smooths(state_gam))[i])$est
+#temp_gam <- get(paste(province, "_gam", sep = ""))
+region_plot_list[[i]][,j] <- evaluate_smooth(temp_gam, smooth = unique(smooths(region_gam))[i])$est
 
-state_se_list[[i]][,j] <- evaluate_smooth(temp_gam, smooth = unique(smooths(state_gam))[i])$se
+region_se_list[[i]][,j] <- evaluate_smooth(temp_gam, smooth = unique(smooths(region_gam))[i])$se
 
-range_statelist[[i]][,j] <- seq(min(italy_small[italy_small$state == state,i], na.rm = TRUE), max(italy_small[italy_small$state == state,i], na.rm =  TRUE), , 100)
+range_regionlist[[i]][,j] <- seq(min(italy_small[italy_small$region == region,i], na.rm = TRUE), max(italy_small[italy_small$region == region,i], na.rm =  TRUE), , 100)
   }
 }
 ```
@@ -202,105 +202,105 @@ range_statelist[[i]][,j] <- seq(min(italy_small[italy_small$state == state,i], n
 ```{r}
 # set up all plots for grid plotting
 
-dfhome <- data.frame(state_plot_list[[1]])
+dfhome <- data.frame(region_plot_list[[1]])
 
-names(dfhome) <- state_names
+names(dfhome) <- region_names
 dfhome$time = 1:100
-dfhome<- pivot_longer(dfhome,1:8 , names_to = "State", values_to = "y_val")
-homex <- data.frame(range_statelist[[1]])
-names(homex) <-state_names
+dfhome<- pivot_longer(dfhome,1:8 , names_to = "region", values_to = "y_val")
+homex <- data.frame(range_regionlist[[1]])
+names(homex) <-region_names
 homex$time = 1:100
-homex <- pivot_longer(homex, 1:8, names_to = "State", values_to = "x_val")
+homex <- pivot_longer(homex, 1:8, names_to = "region", values_to = "x_val")
 
 dfhome_all <- full_join(homex, dfhome)
 
-dfhomese <- data.frame(state_se_list[[1]])
-names(dfhomese) <- state_names
+dfhomese <- data.frame(region_se_list[[1]])
+names(dfhomese) <- region_names
 dfhomese$time = 1:100
-dfhomese <- pivot_longer(dfhomese,1:8 , names_to = "State", values_to = "y_se")
+dfhomese <- pivot_longer(dfhomese,1:8 , names_to = "region", values_to = "y_se")
 
 dfhome_all2 <- full_join(dfhome_all, dfhomese)
 
-gg_home <- ggplot(dfhome_all2, aes(x_val, y_val, color = State))+geom_line(alpha = 0.7) + geom_ribbon(aes(ymin = y_val - y_se, ymax = y_val + y_se, fill = State), alpha = 0.25) + labs(x = "", title = "% Change Mobility", y = "Effect")  + theme_bw() + theme(text = element_text(size = 14), legend.position = "none")
+gg_home <- ggplot(dfhome_all2, aes(x_val, y_val, color = region))+geom_line(alpha = 0.7) + geom_ribbon(aes(ymin = y_val - y_se, ymax = y_val + y_se, fill = region), alpha = 0.25) + labs(x = "", title = "% Change Mobility", y = "Effect")  + theme_bw() + theme(text = element_text(size = 14), legend.position = "none")
 
 
-dfpm25 <- data.frame(state_plot_list[[2]])
+dfpm25 <- data.frame(region_plot_list[[2]])
 fbplot(dfpm25, ylab = "PM2.5")
-names(dfpm25) <- state_names
+names(dfpm25) <- region_names
 dfpm25$time = 1:100
-dfpm25<- pivot_longer(dfpm25,1:8 , names_to = "State", values_to = "y_val")
-pm25x <- data.frame(range_statelist[[2]])
-names(pm25x) <-state_names
+dfpm25<- pivot_longer(dfpm25,1:8 , names_to = "region", values_to = "y_val")
+pm25x <- data.frame(range_regionlist[[2]])
+names(pm25x) <-region_names
 pm25x$time = 1:100
-pm25x <- pivot_longer(pm25x, 1:8, names_to = "State", values_to = "x_val")
+pm25x <- pivot_longer(pm25x, 1:8, names_to = "region", values_to = "x_val")
 
 dfpm25_all <- full_join(pm25x, dfpm25)
 
-dfpm25se <- data.frame(state_se_list[[2]])
-names(dfpm25se) <- state_names
+dfpm25se <- data.frame(region_se_list[[2]])
+names(dfpm25se) <- region_names
 dfpm25se$time = 1:100
-dfpm25se <- pivot_longer(dfpm25se,1:8 , names_to = "State", values_to = "y_se")
+dfpm25se <- pivot_longer(dfpm25se,1:8 , names_to = "region", values_to = "y_se")
 
 dfpm25_all2 <- full_join(dfpm25_all, dfpm25se)
 
-gg_pm25 <- ggplot(dfpm25_all2, aes(x_val, y_val, color = State))+geom_line(alpha = 0.7) + geom_ribbon(aes(ymin = y_val - y_se, ymax = y_val + y_se, fill = State), alpha = 0.25) + labs(x = "", title = expression(paste("PM"[2.5], " (", mu,"g/m"^3, ")")), y = "", color = "Region", fill = "Region")  + theme_bw() + theme(text = element_text(size = 14), legend.position = "none")
+gg_pm25 <- ggplot(dfpm25_all2, aes(x_val, y_val, color = region))+geom_line(alpha = 0.7) + geom_ribbon(aes(ymin = y_val - y_se, ymax = y_val + y_se, fill = region), alpha = 0.25) + labs(x = "", title = expression(paste("PM"[2.5], " (", mu,"g/m"^3, ")")), y = "", color = "Region", fill = "Region")  + theme_bw() + theme(text = element_text(size = 14), legend.position = "none")
 
-dftemp <- data.frame(state_plot_list[[3]])
+dftemp <- data.frame(region_plot_list[[3]])
 
-names(dftemp) <- state_names
+names(dftemp) <- region_names
 dftemp$time = 1:100
-dftemp<- pivot_longer(dftemp,1:8 , names_to = "State", values_to = "y_val")
-tempx <- data.frame(range_statelist[[3]])
-names(tempx) <-state_names
+dftemp<- pivot_longer(dftemp,1:8 , names_to = "region", values_to = "y_val")
+tempx <- data.frame(range_regionlist[[3]])
+names(tempx) <-region_names
 tempx$time = 1:100
-tempx <- pivot_longer(tempx, 1:8, names_to = "State", values_to = "x_val")
+tempx <- pivot_longer(tempx, 1:8, names_to = "region", values_to = "x_val")
 
 dftemp_all <- full_join(tempx, dftemp)
 
-dftempse <- data.frame(state_se_list[[3]])
-names(dftempse) <- state_names
+dftempse <- data.frame(region_se_list[[3]])
+names(dftempse) <- region_names
 dftempse$time = 1:100
-dftempse <- pivot_longer(dftempse,1:8 , names_to = "State", values_to = "y_se")
+dftempse <- pivot_longer(dftempse,1:8 , names_to = "region", values_to = "y_se")
 
 dftemp_all2 <- full_join(dftemp_all, dftempse)
 
-gg_temp <- ggplot(dftemp_all2, aes(x_val, y_val, color = State))+geom_line(alpha = 0.7) + geom_ribbon(aes(ymin = y_val - y_se, ymax = y_val + y_se, fill = State), alpha = 0.25) + labs(x = "", title = expression(paste("Temperature ", ( degree*C))), y = "Effect") + theme_bw() + theme(text = element_text(size = 14), legend.position = "none")
+gg_temp <- ggplot(dftemp_all2, aes(x_val, y_val, color = region))+geom_line(alpha = 0.7) + geom_ribbon(aes(ymin = y_val - y_se, ymax = y_val + y_se, fill = region), alpha = 0.25) + labs(x = "", title = expression(paste("Temperature ", ( degree*C))), y = "Effect") + theme_bw() + theme(text = element_text(size = 14), legend.position = "none")
 
 
-dfhum <- data.frame(state_plot_list[[4]])
+dfhum <- data.frame(region_plot_list[[4]])
 
-names(dfhum) <- state_names
+names(dfhum) <- region_names
 dfhum$time = 1:100
-dfhum<- pivot_longer(dfhum,1:8 , names_to = "State", values_to = "y_val")
-humx <- data.frame(range_statelist[[4]])
-names(humx) <-state_names
+dfhum<- pivot_longer(dfhum,1:8 , names_to = "region", values_to = "y_val")
+humx <- data.frame(range_regionlist[[4]])
+names(humx) <-region_names
 humx$time = 1:100
-humx <- pivot_longer(humx, 1:8, names_to = "State", values_to = "x_val")
+humx <- pivot_longer(humx, 1:8, names_to = "region", values_to = "x_val")
 
 dfhum_all <- full_join(humx, dfhum)
 
-dfhumse <- data.frame(state_se_list[[4]])
-names(dfhumse) <- state_names
+dfhumse <- data.frame(region_se_list[[4]])
+names(dfhumse) <- region_names
 dfhumse$time = 1:100
-dfhumse <- pivot_longer(dfhumse,1:8 , names_to = "State", values_to = "y_se")
+dfhumse <- pivot_longer(dfhumse,1:8 , names_to = "region", values_to = "y_se")
 
 dfhum_all2 <- full_join(dfhum_all, dfhumse)
 
-gg_hum <- ggplot(dfhum_all2, aes(x_val, y_val, color = State))+geom_line(alpha = 0.7) + geom_ribbon(aes(ymin = y_val - y_se, ymax = y_val + y_se, fill = State), alpha = 0.25) + labs(x = "", title = "% Humidity", y = "") + theme_bw() + theme(text = element_text(size = 14), legend.position = "none")
+gg_hum <- ggplot(dfhum_all2, aes(x_val, y_val, color = region))+geom_line(alpha = 0.7) + geom_ribbon(aes(ymin = y_val - y_se, ymax = y_val + y_se, fill = region), alpha = 0.25) + labs(x = "", title = "% Humidity", y = "") + theme_bw() + theme(text = element_text(size = 14), legend.position = "none")
 
 
 # plot all 4
-p4_state <- plot_grid(gg_home, gg_pm25, gg_temp, gg_hum, ncol = 2)
+p4_region <- plot_grid(gg_home, gg_pm25, gg_temp, gg_hum, ncol = 2)
 
 # extract a legend that is laid out horizontally
-legend_b_state <- get_legend(
+legend_b_region <- get_legend(
   gg_pm25 + 
     guides(color = guide_legend(nrow = 2), fill = guide_legend(nrow = 2)) +
     theme(legend.position = "bottom")
 )
 
 # add legend
-plot_grid(p4_state, legend_b_state, ncol = 1,rel_heights = c(1,.1))
+plot_grid(p4_region, legend_b_region, ncol = 1,rel_heights = c(1,.1))
 
 ```
 
