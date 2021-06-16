@@ -1,0 +1,117 @@
+---
+title: "Italy GAM"
+author: "Laura Albrecht"
+date: "2/7/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+  
+```{r}
+# load data and packages
+source("ReadAllData1.R")
+library(mgcv)
+library(gratia)
+library(gridExtra)
+
+# make stat and province into factors
+italy_25$region <- as.factor(italy_25$region)
+italy_25$province_name <- as.factor(italy_25$province_name)
+
+
+
+region_gam <- gam(log(rt) ~s(homer, k = 5)+s(pm25, k = 5)+s(med_temp, k =4) +s(med_hum, k=4)  + province_name, data = italy_25, family = gaussian)
+
+# plot model output
+draw(region_gam)
+
+```
+
+```{r}
+# modify the draw.gam function to allow manual adjustment of each plot label
+
+mydraw.gam <- function (object, parametric = TRUE, select = NULL, scales = c("free", 
+    "fixed"), align = "hv", axis = "lrtb", n = 100, unconditional = FALSE, 
+    overall_uncertainty = TRUE, dist = 0.1, ...) 
+{
+    scales <- match.arg(scales)
+    S <- smooths(object)
+    select <- gratia:::check_user_select_smooths(smooths = S, select = select)
+    d <- gratia:::smooth_dim(object)
+    take <- d <= 2L
+    select <- select[take]
+    S <- S[take]
+    d <- d[take]
+    is_re <- vapply(object[["smooth"]], gratia:::is_re_smooth, logical(1L))
+    is_by <- vapply(object[["smooth"]], gratia:::is_by_smooth, logical(1L))
+    if (any(is_by)) {
+        S <- vapply(strsplit(S, ":"), `[[`, character(1L), 1L)
+    }
+    npara <- 0
+    nsmooth <- length(S)
+    if (isTRUE(parametric)) {
+        terms <- parametric_terms(object)
+        npara <- length(terms)
+        p <- vector("list", length = npara)
+    }
+    g <- l <- vector("list", length = nsmooth)
+    for (i in unique(S)) {
+        eS <- evaluate_smooth(object, smooth = i, n = n, unconditional = unconditional, 
+            overall_uncertainty = overall_uncertainty, dist = dist)
+        l[S == i] <- split(eS, eS[["smooth"]])
+    }
+    l <- l[select]
+    d <- d[select]
+    g <- g[select]
+    if (length(g) == 0L) {
+        message("Unable to draw any of the model terms.")
+        return(invisible(g))
+    }
+    for (i in seq_along(l)) {
+        g[[i]] <- draw(l[[i]])
+    }
+    if (isTRUE(parametric)) {
+        for (i in seq_along(terms)) {
+            p[[i]] <- evaluate_parametric_term(object, term = terms[i])
+            g[[i + length(g)]] <- draw(p[[i]])
+        }
+    }
+    if (isTRUE(identical(scales, "fixed"))) {
+        wrapper <- function(x) {
+            range(x[["est"]] + (2 * x[["se"]]), x[["est"]] - 
+                (2 * x[["se"]]))
+        }
+        ylims <- range(unlist(lapply(l, wrapper)))
+        if (isTRUE(parametric)) {
+            ylims <- range(ylims, unlist(lapply(p, function(x) range(x[["upper"]], 
+                x[["lower"]]))))
+        }
+        gg <- seq_along(g)[c(d == 1L, rep(TRUE, npara))]
+        for (i in gg) {
+            g[[i]] <- g[[i]] + lims(y = ylims)# + geom_rug(data = mf, aes(x = ))
+        }
+    }
+    g
+}
+p <- mydraw.gam(region_gam)
+
+# customize plot labels
+p[[1]] <- p[[1]] + labs(title = "% Change Mobility", x ="") + geom_rug(italy_25, mapping = aes(x = homer), inherit.aes = F) + theme_bw() + theme(title = element_text(size = 22), axis.text = element_text(size = 16))
+
+p[[2]] <- p[[2]]  + labs(x = "", title = expression(paste("PM"[2.5], " (", mu,"g/m"^3, ")"))) + geom_rug(italy_25[italy_25$pm25 < 170,], mapping = aes(x = pm25), inherit.aes = F) + theme_bw() + theme(title= element_text(size = 22), axis.text = element_text(size = 16))
+
+p[[3]] <- p[[3]] + geom_rug(italy_25, mapping = aes(x = med_temp), inherit.aes = F) + labs(title = expression(paste("Temperature ", ( degree*C))), y = "", x = "")+ theme_bw() + theme(title = element_text(size = 22), axis.text = element_text(size = 16))
+
+p[[4]] <- p[[4]] + geom_rug(italy_25, mapping = aes(x = med_hum), inherit.aes = F) + labs(title = "% Humidity", y = "", x = "") + theme_bw() + theme(title = element_text(size = 22), axis.text = element_text(size = 16))
+
+
+
+# plot custom ordering, full GAM
+grid.arrange(arrangeGrob(p[[1]],p[[2]], ncol=1, nrow=2), arrangeGrob(p[[3]], p[[4]], ncol = 1, nrow = 2) , layout_matrix = rbind(c(1,2),c(1,2)))
+```
+
+
