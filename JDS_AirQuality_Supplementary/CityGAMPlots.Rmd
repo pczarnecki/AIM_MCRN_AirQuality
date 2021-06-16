@@ -112,7 +112,7 @@ dfpm25_all2 <- full_join(dfpm25_all, dfpm25se)
 
 dfpm25_all2 <- left_join(dfpm25_all2, italy_25[,c("province_name", "region")], by = c("Province" = "province_name"))
 
-gg_pm25 <- ggplot(dfpm25_all2, aes(x_val, y_val, group= Province, color = region))+geom_line() + labs(x = "", title = expression(paste("PM"[2.5], " (", mu,"g/m"^3, ")")), y = "", color = "Region") +theme_bw() + theme(text = element_text(size = 14), legend.position = "none")
+gg_pm25 <- ggplot(dfpm25_all2, aes(x_val, y_val, group= Province, color = region))+geom_line() + labs(x = "", title = expression(paste("PM"[2.5], " (", AQI, ")")), y = "", color = "Region") +theme_bw() + theme(text = element_text(size = 14), legend.position = "none")
 
 
 # extract a legend that is laid out horizontally
@@ -245,7 +245,7 @@ dfpm25se <- pivot_longer(dfpm25se,1:8 , names_to = "region", values_to = "y_se")
 
 dfpm25_all2 <- full_join(dfpm25_all, dfpm25se)
 
-gg_pm25 <- ggplot(dfpm25_all2, aes(x_val, y_val, color = region))+geom_line(alpha = 0.7) + geom_ribbon(aes(ymin = y_val - y_se, ymax = y_val + y_se, fill = region), alpha = 0.25) + labs(x = "", title = expression(paste("PM"[2.5], " (", mu,"g/m"^3, ")")), y = "", color = "Region", fill = "Region")  + theme_bw() + theme(text = element_text(size = 14), legend.position = "none")
+gg_pm25 <- ggplot(dfpm25_all2, aes(x_val, y_val, color = region))+geom_line(alpha = 0.7) + geom_ribbon(aes(ymin = y_val - y_se, ymax = y_val + y_se, fill = region), alpha = 0.25) + labs(x = "", title = expression(paste("PM"[2.5], " (", AQI, ")")), y = "", color = "Region", fill = "Region")  + theme_bw() + theme(text = element_text(size = 14), legend.position = "none")
 
 dftemp <- data.frame(region_plot_list[[3]])
 
